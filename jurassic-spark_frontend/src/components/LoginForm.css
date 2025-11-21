@@ -108,7 +108,7 @@
     padding: 1.3rem 2rem;
     font-weight: 700;
     font-family: var(--font-heading);
-    margin-bottom: 2rem;
+    margin-bottom: 1rem; 
     border-radius: 12px;
     background: linear-gradient(135deg, var(--color-cta-yellow) 0%, var(--color-cta-orange) 100%);
     border: none;
@@ -118,7 +118,7 @@
     letter-spacing: 1px;
     cursor: pointer;
     box-sizing: border-box;
-    box-shadow: 0 8px 25px rgba(255, 221, 0, 0.3);
+    box-shadow: 0 10px 8px rgba(255, 221, 0, 0.2);
 }
 
 .login-btn:hover {
@@ -132,25 +132,28 @@
     cursor: not-allowed;
 }
 
-.signup-btn {
-    width: 100%;
-    margin-top: 1rem;
-    padding: 1.2rem 2rem;
-    font-size: 1.1rem;
-    font-family: var(--font-heading);
-    background: white; 
-    border: 2px solid var(--color-logo-vivid-blue);
-    color: var(--color-logo-vivid-blue);
-    border-radius: 12px;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    box-sizing: border-box;
+.or-text {
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+    opacity: 0.7;
 }
 
-.signup-btn:hover {
-    background: rgba(28, 140, 254, 0.05);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(28, 140, 254, 0.2);
+/* NEW: Create Account as simple link */
+.create-account-link {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: var(--color-logo-vivid-blue);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: inline-block;
+    padding: 0.5rem 0; /* Small padding for easier clicking */
+}
+
+.create-account-link:hover {
+    color: var(--color-cta-orange);
+    text-decoration: underline;
 }
 
 .forgot-password {

@@ -162,16 +162,15 @@ const LoginForm = () => {
                     {isLoading ? 'Logging in...' : 'Log In'}
                 </button>
 
-                {/* Forgot Password Link */}
-                <div className="text-center mb-3">
-                    <a href="#" className="forgot-password">Forgot your password?</a>
+                <div className="text-center or-text">
+                    or
                 </div>
 
-                {/* Sign Up Link */}
+                {/*Create Account */}
                 <div className="text-center">
-                    <button type="button" className="btn btn-secondary signup-btn">
+                    <a href="#" className="create-account-link">
                         Create Account
-                    </button>
+                    </a>
                 </div>
             </form>
         </div>
