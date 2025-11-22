@@ -2,9 +2,8 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './NavBar.css';
 
-// Import logo and music sheet(hamburger) icon
-import Logo from '../img/logo.png';      // mobile logo 
-import NoteIcon from '../img/Note.png';  // hamburger icon 
+import Logo from '../assets/VibeLab_mobile.png';      // first logo (mobile)
+import NoteIcon from '../assets/Note.png';            // hamburger icon
 
 const NavBar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
