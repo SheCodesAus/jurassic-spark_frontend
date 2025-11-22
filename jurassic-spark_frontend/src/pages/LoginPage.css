@@ -1,0 +1,260 @@
+/* Login Page with INTENSE Purple  */
+.login-page {
+    min-height: 100vh;
+    width: 100vw;
+    position: relative;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    
+    
+    background: 
+        /* Top layer - main gradient with more intense purple */
+        linear-gradient(
+            135deg, 
+            #5A2FCF 0%,                       
+            var(--color-logo-blue) 25%,
+            var(--color-logo-vivid-blue) 50%,
+            var(--color-logo-intense-blue) 75%,
+            var(--color-logo-blue) 100%
+        ),
+        /* Second layer */
+        radial-gradient(
+            circle at 20% 10%, 
+            rgba(90, 47, 207, 0.9) 0%,         
+            transparent 50%
+        ),
+        radial-gradient(
+            circle at 80% 90%, 
+            rgba(28, 140, 254, 0.6) 0%, 
+            transparent 50%
+        );
+    background-size: 100% 100%, 150% 150%, 120% 120%;
+}
+
+.login-page::before {
+    display: none; 
+}
+
+
+
+.login-header {
+    padding: 3rem 0 2rem;
+    color: white;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    width: 100%;
+}
+
+.logo-text {
+    font-family: var(--font-heading); 
+    font-size: 4rem;
+    font-weight: 900;
+    margin-bottom: 1rem;
+    color: white; 
+    letter-spacing: -2px;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.tagline {
+    font-family: var(--font-body); 
+    font-size: 1.3rem;
+    opacity: 0.95;
+    font-weight: 300;
+    margin-bottom: 0;
+    color: var(--color-logo-light-blue); 
+    letter-spacing: 1px;
+}
+
+.login-main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 0 4rem;
+    position: relative;
+    z-index: 2;
+    width: 100%;
+}
+
+.login-container {
+    max-width: 520px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* Features Preview with Brand Colors */
+.features-preview {
+    background: rgba(254, 254, 255, 0.05); 
+    border: 1px solid rgba(28, 140, 254, 0.2); 
+    border-radius: 20px;
+    padding: 3rem;
+    backdrop-filter: blur(20px);
+    margin-top: 3rem;
+    max-width: 100%;
+}
+
+.features-preview h3 {
+    font-family: var(--font-heading); 
+    color: white;
+    margin-bottom: 2.5rem;
+    font-size: 1.8rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    width: 100%;
+}
+
+.feature-item {
+    text-align: center;
+    color: white;
+    padding: 1.5rem;
+    border-radius: 16px;
+    background: rgba(28, 140, 254, 0.1); 
+    border: 1px solid rgba(90, 47, 207, 0.3); /* Updated to use intense purple */
+    transition: all 0.3s ease;
+}
+
+.feature-item:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 221, 0, 0.1); 
+    border-color: var(--color-cta-yellow);
+    box-shadow: 0 10px 30px rgba(255, 221, 0, 0.2);
+}
+
+.feature-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.feature-item h4 {
+    font-family: var(--font-heading); 
+    color: white;
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.feature-item p {
+    font-family: var(--font-body); 
+    font-size: 1rem;
+    opacity: 0.9;
+    margin-bottom: 0;
+    line-height: 1.6;
+    color: var(--color-logo-light-blue);
+}
+
+.login-footer {
+    padding: 2rem 0;
+    color: rgba(254, 254, 255, 0.7);
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    font-size: 1rem;
+    font-family: var(--font-body);
+    width: 100%;
+}
+
+/* Desktop Responsive */
+@media (min-width: 768px) {
+    .login-header {
+        padding: 4rem 0 3rem;
+    }
+    
+    .logo-text {
+        font-size: 6rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .tagline {
+        font-size: 1.5rem;
+    }
+    
+    .login-container {
+        max-width: 600px;
+        padding: 0 2rem;
+    }
+    
+    .features-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 3rem;
+    }
+    
+    .features-preview {
+        padding: 4rem;
+    }
+    
+    .feature-item {
+        padding: 2rem;
+    }
+    
+    .feature-icon {
+        font-size: 3.5rem;
+    }
+    
+    .feature-item h4 {
+        font-size: 1.4rem;
+    }
+    
+    .feature-item p {
+        font-size: 1.1rem;
+    }
+}
+
+/* Large Desktop */
+@media (min-width: 1200px) {
+    .login-container {
+        max-width: 800px;
+    }
+    
+    .logo-text {
+        font-size: 7rem;
+    }
+    
+    .tagline {
+        font-size: 1.8rem;
+    }
+    
+    .features-preview {
+        padding: 5rem;
+    }
+    
+    .features-grid {
+        gap: 4rem;
+    }
+}
+
+/* Mobile adjustments */
+@media (max-width: 480px) {
+    .login-header {
+        padding: 2rem 0 1.5rem;
+    }
+    
+    .logo-text {
+        font-size: 3rem;
+    }
+    
+    .tagline {
+        font-size: 1.1rem;
+    }
+    
+    .login-container {
+        padding: 0 0.5rem;
+    }
+    
+    .features-preview {
+        padding: 2rem;
+        margin-top: 2rem;
+    }
+    
+    .feature-item {
+        padding: 1.5rem;
+    }
+}
