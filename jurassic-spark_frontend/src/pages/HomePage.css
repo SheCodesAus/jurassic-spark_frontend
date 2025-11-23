@@ -36,6 +36,8 @@
     border-radius: 50%;
     z-index: 0;
     box-shadow: 0 8px 40px rgba(0,0,0,0.08);
+        max-width: 90vw;
+    max-height: 90vw;
 }
 
 .logo-circle {
@@ -46,6 +48,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    max-width: 90vw;
+    max-height: 90vw;
 }
 
 .hero-logo {
@@ -62,8 +66,8 @@
 /* Genre icons - evenly spaced using polar coordinates */
 .genre-icon {
     position: absolute;
-    width: 28px;
-    height: 28px;
+    width: 98px;
+    height: 98px;
     border-radius: 50%;
     object-fit: contain;
     box-sizing: border-box;
@@ -76,12 +80,12 @@
 }
 
 /* 6 icons around the circle */
-.genre-icon-0 { top: 5%; left: 50%; transform: translate(-50%, -50%); }
-.genre-icon-1 { top: 25%; left: 85%; transform: translate(-50%, -50%); }
-.genre-icon-2 { top: 75%; left: 85%; transform: translate(-50%, -50%); }
-.genre-icon-3 { top: 95%; left: 50%; transform: translate(-50%, -50%); }
-.genre-icon-4 { top: 75%; left: 15%; transform: translate(-50%, -50%); }
-.genre-icon-5 { top: 25%; left: 15%; transform: translate(-50%, -50%); }
+.genre-icon-0 { top: 15%; left: 50%; transform: translate(-50%, -50%); }
+.genre-icon-1 { top: 35%; left: 85%; transform: translate(-50%, -50%); }
+.genre-icon-2 { top: 70%; left: 80%;transform: translate(-50%, -50%); }
+.genre-icon-3 { top: 85%; left: 50%; transform: translate(-50%, -50%); }
+.genre-icon-4 { top: 70%; left: 20%; transform: translate(-50%, -50%); }
+.genre-icon-5 { top: 35%; left: 17%; transform: translate(-50%, -50%); }
 
 .hero-actions {
     display: flex;
