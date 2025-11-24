@@ -98,6 +98,7 @@
     position: relative;
     z-index: 10;
 }
+
 .hero-btn {
     width: 100%;
     max-width: 220px;
@@ -107,34 +108,41 @@
     border-radius: 14px;
     box-shadow: 0 8px 25px rgba(255, 221, 0, 0.12);
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    white-space: pre-line;
     text-align: center;
-    font-family: var(--font-body); /* Lato font */
-    font-weight: 700;
+    font-family: var(--font-body);
+    font-weight: 800;
     border: none;
     cursor: pointer;
-    transition: background 0.2s, transform 0.2s;
+    transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+    color: #fff; 
+    text-shadow:
+        0 2px 8px rgba(0,0,0,0.7),
+        0 0px 2px rgba(0,0,0,0.35),
+        0 0 0.5px #333;
 }
 
+
 .btn-primary {
-    background: linear-gradient(135deg, #FFB800 0%, #FFC300 100%);
-    color: #fff;
+    background: linear-gradient(135deg, #FFD600 0%, #FFB800 40%, #FFC300 70%, #B8860B 100%);
+    color: #fff !important;
     text-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    border: none;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.35), 0 0px 2px rgba(0,0,0,0.18);
 }
 
 .btn-orange {
     background: linear-gradient(135deg, #FF6700 0%, #FFB800 100%);
-    color: #fff;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    text-shadow: 0 2px 8px rgba(0,0,0,0.35), 0 0px 2px rgba(0,0,0,0.18);
 }
 
 .hero-btn:hover {
-    transform: translateY(-2px);
+    transform: translateY(-2px) scale(1.03);
     box-shadow: 0 12px 35px rgba(255, 221, 0, 0.18);
     filter: brightness(1.08);
+    color: #fff;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.25);
 }
 
 /* Desktop adjustments */
