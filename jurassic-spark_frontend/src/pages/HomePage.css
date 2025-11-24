@@ -20,7 +20,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 4rem 1rem 2rem 1rem;
+    padding: 0rem 1rem 2rem 1rem;
     position: relative;
     min-height: 80vh;
 }
@@ -30,8 +30,8 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 490px;
-    height: 490px;
+    width: min(490px, 90vw);
+    height: min(490px, 90vw);
     background: white;
     border-radius: 50%;
     z-index: 0;
@@ -39,13 +39,16 @@
 }
 
 .logo-circle {
-    position: relative;
-    height: 490px;
-    width: 490px;
-    margin: 4rem auto 1rem auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(490px, 90vw);
+    height: min(490px, 90vw);
+    background: white;
+    border-radius: 50%;
+    z-index: 0;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.08);
 }
 
 .hero-logo {
@@ -62,8 +65,8 @@
 /* Genre icons - evenly spaced using polar coordinates */
 .genre-icon {
     position: absolute;
-    width: 28px;
-    height: 28px;
+    width: 98px;
+    height: 98px;
     border-radius: 50%;
     object-fit: contain;
     box-sizing: border-box;
@@ -76,12 +79,12 @@
 }
 
 /* 6 icons around the circle */
-.genre-icon-0 { top: 5%; left: 50%; transform: translate(-50%, -50%); }
-.genre-icon-1 { top: 25%; left: 85%; transform: translate(-50%, -50%); }
-.genre-icon-2 { top: 75%; left: 85%; transform: translate(-50%, -50%); }
-.genre-icon-3 { top: 95%; left: 50%; transform: translate(-50%, -50%); }
-.genre-icon-4 { top: 75%; left: 15%; transform: translate(-50%, -50%); }
-.genre-icon-5 { top: 25%; left: 15%; transform: translate(-50%, -50%); }
+.genre-icon-0 { top: 15%; left: 50%; transform: translate(-50%, -50%); }
+.genre-icon-1 { top: 35%; left: 85%; transform: translate(-50%, -50%); }
+.genre-icon-2 { top: 70%; left: 80%;transform: translate(-50%, -50%); }
+.genre-icon-3 { top: 85%; left: 50%; transform: translate(-50%, -50%); }
+.genre-icon-4 { top: 70%; left: 20%; transform: translate(-50%, -50%); }
+.genre-icon-5 { top: 35%; left: 17%; transform: translate(-50%, -50%); }
 
 .hero-actions {
     display: flex;
@@ -89,11 +92,12 @@
     gap: 1.5rem;
     align-items: center;
     justify-content: center;
-    margin-top: 0.5rem;
+    margin-top: 2rem; 
     margin-bottom: 4rem;
     width: 100%;
+    position: relative;
+    z-index: 10;
 }
-
 .hero-btn {
     width: 100%;
     max-width: 220px;
@@ -142,7 +146,7 @@
     .logo-circle {
         width: 490px;
         height: 490px;
-        margin: 6rem auto 1rem auto; /* More space above, less below */
+        margin: 0rem auto 1rem auto;
     }
     
     .hero-logo {
@@ -165,9 +169,10 @@
     .hero-actions {
         flex-direction: row;
         gap: 2rem;
-        margin-top: 4rem;
+        margin-top: 55rem;
         margin-bottom: 4rem;
     }
+
     .hero-btn {
         width: 180px;
         height: 80px;
