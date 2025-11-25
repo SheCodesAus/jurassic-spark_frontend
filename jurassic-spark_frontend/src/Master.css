@@ -1,0 +1,321 @@
+/* --- 1. CSS Variables (Custom Properties) --- */
+:root {
+    /* EXACT Logo Colors from your brand */
+    --color-logo-light-blue: #FEFEFF;
+    --color-logo-vivid-purple: #7245F6;
+    --color-logo-vivid-blue: #1C8CFE;  /* Fixed typo: was "ic8cfe" */
+    --color-logo-blue: #4B58FA;
+    --color-logo-intense-blue: #2375FD;
+
+    /* EXACT CTA Colors */
+    --color-cta-yellow: #FFDD00;
+    --color-cta-orange: #FF6700;
+
+    /* General UI Colors */
+    --color-text-primary: #333333;
+    --color-text-secondary: #666666;
+    --color-background-light: #FFFFFF;
+    --color-background-dark: #121212;
+    --color-border: #EEEEEE;
+
+    /* Fonts */
+    --font-heading: 'Nunito', sans-serif;
+    --font-body: 'Lato', sans-serif;
+}
+
+
+/* --- 2. Basic Reset / Normalize --- */
+/* This section helps make sure your design looks the same across different browsers. */
+/* It removes default styles browsers put on things like margins, padding, etc. */
+* {
+    margin: 0;           /* Removes default space outside elements */
+    padding: 0;          /* Removes default space inside elements */
+    box-sizing: border-box; /* Makes sure padding and border are included in element's total width/height */
+}
+
+/* Base styles for the entire page (mobile-first) */
+body {
+    font-family: var(--font-body); /* Set Lato as the main font for all text */
+    font-size: 16px;             /* Default text size */
+    line-height: 1.6;            /* Space between lines of text, makes it easier to read */
+    color: var(--color-text-primary); /* Default text color (dark grey) */
+    background-color: var(--color-background-light); /* Default page background (white) */
+    -webkit-font-smoothing: antialiased; /* Makes text look smoother on Mac/iOS */
+    -moz-osx-font-smoothing: grayscale;  /* Makes text look smoother on Firefox/Linux */
+}
+
+/* Link styling */
+a {
+    color: var(--color-logo-vivid-blue); /* A nice blue for links */
+    text-decoration: none;             /* Removes the underline from links */
+}
+
+a:hover {
+    text-decoration: underline;        /* Adds underline back when mouse is over it */
+}
+
+/* --- 3. Typography (Headings) --- */
+/* How your different heading sizes will look. */
+
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading); /* All headings use Nunito */
+    color: var(--color-text-primary); /* Default heading color */
+    margin-bottom: 0.8em;             /* Space below headings */
+    line-height: 1.2;                 /* Tighter line spacing for headings */
+}
+
+h1 {
+    font-size: 2.5em; /* Larger size for main titles (e.g., 2.5 times the base font size) */
+    font-weight: 800; /* Extra bold */
+}
+
+h2 {
+    font-size: 2em;   /* Sub-titles */
+    font-weight: 700; /* Bold */
+}
+
+h3 {
+    font-size: 1.5em; /* Section titles */
+    font-weight: 700;
+}
+
+h4 {
+    font-size: 1.2em; /* Smaller headings */
+    font-weight: 600; /* Semi-bold */
+}
+
+/* --- 4. Form Elements (Basic Styling) --- */
+/* How text boxes, buttons, etc., will look. */
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea {
+    width: 100%;                  /* Take up full width available */
+    padding: 10px 12px;           /* Space inside the box */
+    margin-bottom: 15px;          /* Space below the input box */
+    border: 1px solid var(--color-border); /* Light grey border */
+    border-radius: 8px;           /* Slightly rounded corners */
+    font-family: var(--font-body); /* Use Lato for input text */
+    font-size: 1em;               /* Standard size */
+    color: var(--color-text-primary);
+}
+
+input:focus,
+textarea:focus {
+    outline: none;                    /* Remove default blue outline on focus */
+    border-color: var(--color-logo-vivid-blue); /* Change border color when clicked on */
+    box-shadow: 0 0 0 3px rgba(28, 140, 254, 0.2); /* Soft glow effect */
+}
+
+
+/* --- 5. Buttons (CTA and General) --- */
+/* Styling for your interactive buttons. */
+
+.btn {
+    display: inline-block;          /* Allows setting width/height, but aligns like text */
+    padding: 12px 25px;             /* Space inside the button */
+    border-radius: 8px;             /* Rounded corners */
+    font-family: var(--font-heading); /* Nunito for button text */
+    font-size: 1.1em;               /* Slightly larger text */
+    font-weight: 700;               /* Bold text */
+    text-align: center;             /* Center text in button */
+    cursor: pointer;                /* Mouse pointer changes to a hand */
+    transition: background-color 0.2s ease, transform 0.1s ease; /* Smooth animation for hover */
+    border: none;                   /* Remove default button border */
+}
+
+/* Primary Call to Action Button */
+.btn-primary {
+    background-color: var(--color-cta-yellow); /* bright yellow CTA color */
+    color: var(--color-text-primary);        /* Dark text on yellow */
+}
+
+.btn-primary:hover {
+    background-color: var(--color-cta-orange); /* Orange on hover for impact */
+    transform: translateY(-2px);               /* Little lift effect */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);    /* Soft shadow on hover */
+}
+
+/* Secondary Button (e.g., for "Cancel" or less prominent actions) */
+.btn-secondary {
+    background-color: var(--color-border);     /* Light background */
+    color: var(--color-text-secondary);        /* Lighter text */
+}
+
+.btn-secondary:hover {
+    background-color: darken(var(--color-border), 10%); /* (Conceptual: will need a CSS preprocessor for this) */
+    /* For pure CSS, you'd pick a slightly darker hex code for var(--color-border) */
+    background-color: #E0E0E0; /* Slightly darker grey */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Example of a more subtle "ghost" button */
+.btn-ghost {
+    background-color: transparent;
+    color: var(--color-logo-vivid-blue);
+    border: 2px solid var(--color-logo-vivid-blue);
+}
+
+.btn-ghost:hover {
+    background-color: var(--color-logo-vivid-blue);
+    color: var(--color-background-light);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* --- 6. Container for Layout (Basic Mobile Structure) --- */
+/* This helps center your content and gives it some breathing room. */
+
+.container {
+    width: 100%;             /* Default to full width on mobile */
+    max-width: 100%;         /* Ensures it doesn't overflow */
+    padding: 0 15px;         /* Padding on the sides for small screens */
+    margin: 0 auto;          /* Centers the container horizontally */
+}
+
+/* --- 7. Responsive Design (Desktop Styles) --- */
+
+@media (min-width: 768px) { /* For screens wider than 768 pixels (e.g., tablets/desktops) */
+    body {
+        font-size: 17px; /* Slightly larger base font for desktops */
+    }
+
+    h1 {
+        font-size: 3.5em; /* Larger headings on desktop */
+    }
+
+    h2 {
+        font-size: 2.5em;
+    }
+
+    h3 {
+        font-size: 1.8em;
+    }
+
+    .container {
+        max-width: 960px; /* Max width for content on typical desktops */
+        padding: 0 20px;   /* A bit more side padding */
+    }
+}
+
+
+@media (min-width: 1200px) { /* For very large screens */
+    .container {
+        max-width: 1140px; /* Even wider container */
+    }
+}
+
+/* --- 8. Accessibility & UX Improvements --- */
+
+/* Better focus states for keyboard navigation */
+button:focus,
+.btn:focus {
+    outline: 2px solid var(--color-logo-vivid-blue);
+    outline-offset: 2px;
+}
+
+/* Disabled button states */
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* Loading states for buttons */
+.btn-loading {
+    position: relative;
+    color: transparent;
+}
+
+.btn-loading::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 50%;
+    left: 50%;
+    margin-left: -8px;
+    margin-top: -8px;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Form validation styles */
+input.error,
+textarea.error {
+    border-color: #e74c3c;
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2);
+}
+
+input.success,
+textarea.success {
+    border-color: #27ae60;
+    box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.2);
+}
+
+/* --- 9. Utility Classes --- */
+
+/* Spacing utilities */
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mb-3 { margin-bottom: 1.5rem; }
+.mb-4 { margin-bottom: 2rem; }
+
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.mt-4 { margin-top: 2rem; }
+
+/* Text alignment */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+/* Flexbox utilities */
+.flex { display: flex; }
+.flex-column { flex-direction: column; }
+.justify-center { justify-content: center; }
+.align-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+
+/* --- 10. Components --- */
+
+/* Card component */
+.card {
+    background-color: var(--color-background-light);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.2s ease;
+}
+
+.card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* --- 11. Enhanced Mobile Touch Targets --- */
+@media (max-width: 767px) {
+    .btn {
+        min-height: 44px; /* Apple's recommended minimum touch target */
+        padding: 12px 20px;
+    }
+    
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    textarea {
+        min-height: 44px;
+        font-size: 16px; /* Prevents iOS zoom when focusing inputs */
+    }
+}
