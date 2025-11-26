@@ -118,7 +118,7 @@
     letter-spacing: 1px;
     cursor: pointer;
     box-sizing: border-box;
-    box-shadow: 0 10px 8px rgba(255, 221, 0, 0.2);
+    justify-content: center;
 }
 
 .login-btn:hover {

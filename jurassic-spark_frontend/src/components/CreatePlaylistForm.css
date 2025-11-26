@@ -167,6 +167,72 @@
     color: #333;
     font-size: 1rem;
 }
+/* Search bar dropdown styles */
+.search-bar-group {
+    position: relative;
+}
+
+.search-dropdown {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    z-index: 10;
+    background: #fff;
+    border: 1px solid #e3e3e3;
+    border-radius: 0.7rem;
+    box-shadow: 0 4px 16px rgba(114, 69, 246, 0.08);
+    margin-top: 0.2rem;
+    padding: 0.2rem 0;
+    list-style: none;
+    max-height: 180px;
+    overflow-y: auto;
+}
+
+.search-dropdown-item {
+    padding: 0.7rem 1rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1rem;
+    color: #333;
+    transition: background 0.15s;
+}
+
+.search-dropdown-item:hover {
+    background: #f7f7fa;
+}
+
+.song-title {
+    font-weight: 600;
+}
+
+.song-artist {
+    font-size: 0.95em;
+    color: #7245F6;
+    margin-left: 0.5em;
+    
+}
+.back-home-link {
+    display: block;
+    margin: 0.5rem auto 0 auto;
+    text-align: center;
+    font-family: var(--font-heading, inherit);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-logo-vivid-blue, #1c8cfe); 
+    text-decoration: none;
+    border-radius: 8px;
+    padding: 0.7rem 0;
+    transition: color 0.2s, background 0.2s;
+}
+
+.back-home-link:hover {
+    color: #fff;
+    background: #FF6700;
+    text-decoration: underline;
+}
 
 /* Responsive adjustments for desktop */
 @media (min-width: 600px) {
@@ -184,6 +250,8 @@
     .button-group {
         flex-direction: row;
         gap: 1.2rem;
+        align-items: center; 
+        justify-content: center;
     }
     .btn,
     .login-btn {

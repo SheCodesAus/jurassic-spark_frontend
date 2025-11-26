@@ -1,16 +1,57 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import vibelabLogo from "../assets/VibeLab.png";
 import "./CreatePlaylistForm.css";
 
 const vibes = ["Country", "Latin", "Pop", "R&B", "Rock", "Techno"];
 
+// Mock songs for dropdown results
+const MOCK_SONGS = [
+  { title: "Blinding Lights", artist: "The Weeknd" },
+  { title: "Shape of You", artist: "Ed Sheeran" },
+  { title: "Levitating", artist: "Dua Lipa" },
+  { title: "Peaches", artist: "Justin Bieber" },
+  { title: "Stay", artist: "The Kid LAROI" },
+];
+
 const CreatePlaylistForm = () => {
   const [playlistName, setPlaylistName] = React.useState("");
   const [playlistDesc, setPlaylistDesc] = React.useState("");
   const [vibe, setVibe] = React.useState("");
-  const [songTitle, setSongTitle] = React.useState("");
-  const [artistName, setArtistName] = React.useState("");
+  const [selectedSong, setSelectedSong] = React.useState(null);
   const [submitted, setSubmitted] = React.useState(false);
+
+  // Search state
+  const [searchTerm, setSearchTerm] = React.useState("");
+  const [searchResults, setSearchResults] = React.useState([]);
+  const [showDropdown, setShowDropdown] = React.useState(false);
+
+  // Mock search function
+  const handleSearch = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    if (value.trim().length > 0) {
+      // Filter mock songs by title or artist
+      const results = MOCK_SONGS.filter(
+        (song) =>
+          song.title.toLowerCase().includes(value.toLowerCase()) ||
+          song.artist.toLowerCase().includes(value.toLowerCase())
+      );
+      setSearchResults(results);
+      setShowDropdown(true);
+    } else {
+      setSearchResults([]);
+      setShowDropdown(false);
+    }
+  };
+
+  // Select a song from dropdown
+  const handleSelectSong = (song) => {
+    setSelectedSong(song);
+    setSearchTerm(`${song.title} by ${song.artist}`);
+    setSearchResults([]);
+    setShowDropdown(false);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -21,8 +62,10 @@ const CreatePlaylistForm = () => {
     setPlaylistName("");
     setPlaylistDesc("");
     setVibe("");
-    setSongTitle("");
-    setArtistName("");
+    setSelectedSong(null);
+    setSearchTerm("");
+    setSearchResults([]);
+    setShowDropdown(false);
     setSubmitted(false);
   };
 
@@ -69,54 +112,60 @@ const CreatePlaylistForm = () => {
           </select>
           <span className="custom-arrow"></span>
         </div>
-        <div className="form-group">
-          <label htmlFor="songTitle">Song Title</label>
+        {/* Search bar for song */}
+        <div className="form-group search-bar-group">
+          <label htmlFor="searchSong">Search for a Song</label>
           <input
             type="text"
-            id="songTitle"
-            value={songTitle}
-            onChange={(e) => setSongTitle(e.target.value)}
-            placeholder="Enter song title..."
+            id="searchSong"
+            value={searchTerm}
+            onChange={handleSearch}
+            placeholder="Type song or artist..."
+            autoComplete="off"
           />
-        </div>
-        <div className="form-group">
-          <label htmlFor="artistName">Artist Name</label>
-          <input
-            type="text"
-            id="artistName"
-            value={artistName}
-            onChange={(e) => setArtistName(e.target.value)}
-            placeholder="Enter artist name..."
-          />
+          {/* Dropdown results */}
+          {showDropdown && searchResults.length > 0 && (
+            <ul className="search-dropdown">
+              {searchResults.map((song, idx) => (
+                <li
+                  key={idx}
+                  onClick={() => handleSelectSong(song)}
+                  className="search-dropdown-item"
+                >
+                  <span className="song-title">{song.title}</span>
+                  <span className="song-artist">by {song.artist}</span>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
         <div className="button-group">
           <button
             type="submit"
-            className="btn btn-primary login-btn mb-3"
+            className="btn btn-orange login-btn mb-3"
             disabled={
               !playlistName.trim() ||
               !vibe.trim() ||
-              (!songTitle.trim() && !artistName.trim())
+              !selectedSong
             }
           >
             All Done!
           </button>
-          <button
-            type="button"
-            className="btn btn-orange"
-            onClick={handleClear}
-          >
-            Back to the Menu
-          </button>
         </div>
       </form>
+      <Link to="/" className="back-home-link">Back to the Home</Link>
       {submitted && (
         <div className="playlist-summary" style={{marginTop: "2rem", background: "#f9f9f9", padding: "1rem", borderRadius: "0.5rem"}}>
           <h2>Playlist Summary</h2>
           <p><strong>Name:</strong> {playlistName}</p>
           <p><strong>Description:</strong> {playlistDesc}</p>
           <p><strong>Vibe:</strong> {vibe}</p>
-          <p><strong>Song:</strong> {songTitle} {artistName && <>by {artistName}</>}</p>
+          <p>
+            <strong>Song:</strong>{" "}
+            {selectedSong
+              ? `${selectedSong.title} by ${selectedSong.artist}`
+              : "None"}
+          </p>
         </div>
       )}
     </div>
