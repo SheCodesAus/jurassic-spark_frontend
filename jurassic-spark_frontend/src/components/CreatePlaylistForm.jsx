@@ -1,4 +1,5 @@
 import React from "react";
+import vibelabLogo from "../assets/VibeLab.png";
 import "./CreatePlaylistForm.css";
 
 const vibes = ["Country", "Latin", "Pop", "R&B", "Rock", "Techno"];
@@ -26,9 +27,12 @@ const CreatePlaylistForm = () => {
   };
 
   return (
-    <div className="create-playlist-form-container">
-      <h1>📝 Create Playlist</h1>
-      <form onSubmit={handleSubmit} className="create-playlist-form">
+    <div className="card login-card">
+      <div className="logo-container">
+        <img src={vibelabLogo} alt="VibeLab Logo" className="form-logo" />
+        <h2 className="text-center mb-2">Create a Playlist</h2>
+      </div>
+      <form onSubmit={handleSubmit} className="login-form">
         <div className="form-group">
           <label htmlFor="playlistName">Playlist Name</label>
           <input
@@ -50,7 +54,7 @@ const CreatePlaylistForm = () => {
             rows={2}
           />
         </div>
-        <div className="form-group">
+        <div className="form-group select-vibe-group">
           <label htmlFor="vibe">Select the Vibe</label>
           <select
             id="vibe"
@@ -63,6 +67,7 @@ const CreatePlaylistForm = () => {
               <option key={v} value={v}>{v}</option>
             ))}
           </select>
+          <span className="custom-arrow"></span>
         </div>
         <div className="form-group">
           <label htmlFor="songTitle">Song Title</label>
@@ -87,21 +92,21 @@ const CreatePlaylistForm = () => {
         <div className="button-group">
           <button
             type="submit"
-            className="btn btn-create"
+            className="btn btn-primary login-btn mb-3"
             disabled={
               !playlistName.trim() ||
               !vibe.trim() ||
               (!songTitle.trim() && !artistName.trim())
             }
           >
-            Create Playlist
+            All Done!
           </button>
           <button
             type="button"
-            className="btn btn-clear"
+            className="btn btn-orange"
             onClick={handleClear}
           >
-            Clear
+            Back to the Menu
           </button>
         </div>
       </form>
