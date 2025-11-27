@@ -2,6 +2,7 @@
 // src/components/PlaylistCreator.jsx
 import React, { useState } from "react";
 import { getAccessToken } from "../services/spotifyAuth";
+import { login } from "../services/spotifyAuth";
 import vibelabLogo from "../assets/VibeLab.png";
 import "./CreatePlaylistForm.css";
 
@@ -163,26 +164,25 @@ export default function PlaylistCreator() {
     }
 
     // --- If not logged in, show gentle prompt (style still loads) ---
-    if (!token) {
-        return (
-        <div className="card login-card">
-            <div className="logo-container">
-            <img src={vibelabLogo} alt="VibeLab Logo" className="form-logo" />
-            <h2 className="text-center mb-2">Create a Playlist</h2>
-            </div>
-            <p style={{ padding: "1rem" }}>Please log in with Spotify first.</p>
-        </div>
-        );
-    }
 
     return (
-        <div className="card login-card">
+    <div className="card login-card">
         <div className="logo-container">
-            <img src={vibelabLogo} alt="VibeLab Logo" className="form-logo" />
-            <h2 className="text-center mb-2">Create a Playlist</h2>
+        <img src={vibelabLogo} alt="VibeLab Logo" className="form-logo" />
+        <h2 className="text-center mb-2">Create a Playlist</h2>
         </div>
 
+        {/* ✅ Conditional rendering */}
+        {!token ? (
+        <>
+            <p className="text-center mb-3">Please log in to Spotify to create a playlist.</p>
+            <button onClick={login} className="btn btn-orange login-btn mb-3">
+            Login with Spotify
+            </button>
+        </>
+        ) : (
         <form onSubmit={handleSubmit} className="login-form">
+            {/* ✅ Your existing form fields stay here */}
             <div className="form-group">
             <label htmlFor="playlistName">Playlist Name</label>
             <input
@@ -224,57 +224,49 @@ export default function PlaylistCreator() {
             <span className="custom-arrow"></span>
             </div>
 
-            {/* Search bar for song */}
-            <div className="form-group search-bar-group">
-            <label htmlFor="searchSong">Search for a Song</label>
+            {/* ✅ Keep your search bar and selected tracks list */}
+            <div className="form-group">
+            <label htmlFor="search">Search and Add Tracks</label>
             <input
                 type="text"
-                id="searchSong"
+                id="search"
                 value={searchTerm}
                 onChange={handleSearch}
-                placeholder="Type song or artist..."
+                placeholder="Search for tracks..."
                 autoComplete="off"
             />
-            {/* Dropdown results */}
             {showDropdown && searchResults.length > 0 && (
-                <ul className="search-dropdown">
+                <div className="dropdown-list">
                 {searchResults.map((track) => (
-                    <li
+                    <div
                     key={track.id}
+                    className="dropdown-item"
                     onClick={() => handleSelectTrack(track)}
-                    className="search-dropdown-item"
                     >
-                    <span className="song-title">{track.name}</span>
-                    <span className="song-artist">
-                        by {track.artists.map((a) => a.name).join(", ")}
-                    </span>
-                    </li>
+                    <strong>{track.name}</strong> by{" "}
+                    {track.artists.map((a) => a.name).join(", ")}
+                    </div>
                 ))}
-                </ul>
+                </div>
             )}
             </div>
 
-            {/* Selected tracks list */}
+            {/* Selected Tracks */}
             {selectedTracks.length > 0 && (
-            <div className="form-group">
-                <label>Selected Tracks</label>
-                <ul className="search-dropdown">
+            <div className="selected-tracks">
+                <h4>Selected Tracks ({selectedTracks.length})</h4>
+                <ul>
                 {selectedTracks.map((uri) => {
-                    const item = searchResults.find((t) => t.uri === uri);
-                    const label =
-                    item
-                        ? `${item.name} — ${item.artists.map((a) => a.name).join(", ")}`
-                        : uri;
+                    const track = searchResults.find((t) => t.uri === uri);
                     return (
-                    <li key={uri} className="search-dropdown-item">
-                        <span className="song-title">{label}</span>
+                    <li key={uri}>
+                        {track ? `${track.name} by ${track.artists.map((a) => a.name).join(", ")}` : uri}
                         <button
                         type="button"
-                        className="btn btn-orange"
-                        style={{ marginLeft: "auto" }}
                         onClick={() => removeTrack(uri)}
+                        className="btn-remove"
                         >
-                        Remove
+                        ✕
                         </button>
                     </li>
                     );
@@ -293,39 +285,40 @@ export default function PlaylistCreator() {
             </button>
             </div>
         </form>
+        )}
 
-        {/* Status / Summary */}
+        {/* ✅ Status and summary stay outside */}
         {status && (
-            <p style={{ padding: "0 1rem", color: "#444" }}>
+        <p style={{ padding: "0 1rem", color: "#444" }}>
             {status}
-            </p>
+        </p>
         )}
 
         {submitted && (
-            <div
+        <div
             className="playlist-summary"
             style={{
-                marginTop: "2rem",
-                background: "#f9f9f9",
-                padding: "1rem",
-                borderRadius: "0.5rem",
+            marginTop: "2rem",
+            background: "#f9f9f9",
+            padding: "1rem",
+            borderRadius: "0.5rem",
             }}
-            >
+        >
             <h2>Playlist Summary</h2>
             <p>
-                <strong>Name:</strong> {playlistName}
+            <strong>Name:</strong> {playlistName}
             </p>
             <p>
-                <strong>Description:</strong> {playlistDesc || `Vibe: ${vibe}`}
+            <strong>Description:</strong> {playlistDesc || `Vibe: ${vibe}`}
             </p>
             <p>
-                <strong>Vibe:</strong> {vibe}
+            <strong>Vibe:</strong> {vibe}
             </p>
             <p>
-                <strong>Tracks:</strong> {selectedTracks.length}
+            <strong>Tracks:</strong> {selectedTracks.length}
             </p>
-            </div>
-        )}
         </div>
+        )}
+    </div>
     );
 }

@@ -8,9 +8,6 @@ import SignupPage from './pages/SignupPage';
 import CreatePlaylistPage from './pages/CreatePlaylistPage';
 import Callback from "./pages/Callback";
 import './Master.css';
-
-
-import SpotifyLoginButton from './components/SpotifyLoginButton';
 import PlaylistCreator from './components/PlaylistCreator';
 
 
@@ -30,7 +27,6 @@ function App() {
           element={
             <div style={{ padding: '2rem' }}>
               <h1>Spotify Integration</h1>
-              <SpotifyLoginButton />
               <PlaylistCreator />
             </div>
           }

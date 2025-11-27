@@ -21,6 +21,14 @@ function base64UrlEncode(buffer) {
         .replace(/=+/g, "");
     }
 
+    
+// Temporarily add:
+console.table({
+    CLIENT_ID,
+    REDIRECT_URI,
+    SCOPES: SCOPES.join(" "),
+});
+
     /** Generate a random string for PKCE code_verifier */
     function generateCodeVerifier(length = 128) {
     const charset =
