@@ -1,18 +1,11 @@
+
 import React from "react";
 import { Link } from "react-router-dom";
 import vibelabLogo from "../assets/VibeLab.png";
 import "./CreatePlaylistForm.css";
+import { getAccessToken } from "../services/spotifyAuth";
 
 const vibes = ["Country", "Latin", "Pop", "R&B", "Rock", "Techno"];
-
-// Mock songs for dropdown results
-const MOCK_SONGS = [
-  { title: "Blinding Lights", artist: "The Weeknd" },
-  { title: "Shape of You", artist: "Ed Sheeran" },
-  { title: "Levitating", artist: "Dua Lipa" },
-  { title: "Peaches", artist: "Justin Bieber" },
-  { title: "Stay", artist: "The Kid LAROI" },
-];
 
 const CreatePlaylistForm = () => {
   const [playlistName, setPlaylistName] = React.useState("");
@@ -25,21 +18,52 @@ const CreatePlaylistForm = () => {
   const [searchTerm, setSearchTerm] = React.useState("");
   const [searchResults, setSearchResults] = React.useState([]);
   const [showDropdown, setShowDropdown] = React.useState(false);
+  const [status, setStatus] = React.useState("");
 
-  // Mock search function
-  const handleSearch = (e) => {
+  const token = getAccessToken();
+
+  // Real Spotify search function
+  const handleSearch = async (e) => {
     const value = e.target.value;
     setSearchTerm(value);
-    if (value.trim().length > 0) {
-      // Filter mock songs by title or artist
-      const results = MOCK_SONGS.filter(
-        (song) =>
-          song.title.toLowerCase().includes(value.toLowerCase()) ||
-          song.artist.toLowerCase().includes(value.toLowerCase())
+
+    if (!token) {
+      setStatus("Please log in with Spotify first.");
+      setShowDropdown(false);
+      return;
+    }
+
+    if (value.trim().length < 2) {
+      setSearchResults([]);
+      setShowDropdown(false);
+      return;
+    }
+
+    try {
+      const resp = await fetch(
+        `https://api.spotify.com/v1/search?q=${encodeURIComponent(value)}&type=track&limit=10`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
+      if (!resp.ok) {
+        const text = await resp.text();
+        throw new Error(`Search failed: ${text}`);
+      }
+      const data = await resp.json();
+      const tracks = data.tracks?.items || [];
+      const results = tracks.map((track) => ({
+        title: track.name,
+        artist: track.artists.map((a) => a.name).join(", "),
+        id: track.id,
+        uri: track.uri,
+        album: track.album?.name,
+        image: track.album?.images?.[2]?.url || track.album?.images?.[0]?.url || ""
+      }));
       setSearchResults(results);
       setShowDropdown(true);
-    } else {
+    } catch (err) {
+      setStatus("Error searching Spotify tracks.");
       setSearchResults([]);
       setShowDropdown(false);
     }
@@ -128,16 +152,23 @@ const CreatePlaylistForm = () => {
             <ul className="search-dropdown">
               {searchResults.map((song, idx) => (
                 <li
-                  key={idx}
+                  key={song.id || idx}
                   onClick={() => handleSelectSong(song)}
                   className="search-dropdown-item"
                 >
+                  {song.image && (
+                    <img src={song.image} alt="album cover" style={{ width: "32px", height: "32px", borderRadius: "4px", marginRight: "0.5rem" }} />
+                  )}
                   <span className="song-title">{song.title}</span>
                   <span className="song-artist">by {song.artist}</span>
+                  {song.album && (
+                    <span className="song-album"> ({song.album})</span>
+                  )}
                 </li>
               ))}
             </ul>
           )}
+          {status && <div className="search-status" style={{ color: "#c00", marginTop: "0.5rem" }}>{status}</div>}
         </div>
         <div className="button-group">
           <button

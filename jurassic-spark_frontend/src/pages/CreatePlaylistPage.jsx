@@ -1,4 +1,6 @@
 import React from 'react';
+
+
 import CreatePlaylistForm from '../components/CreatePlaylistForm';
 import './LoginPage.css'; // Reuse login page styles
 
@@ -6,10 +8,9 @@ const CreatePlaylistPage = () => {
     return (
         <div className="login-page">
             <main className="login-main">
-                <div className="container">
-                    <div className="login-container">
-                        <CreatePlaylistForm />
-                    </div>
+                <div className="login-container">
+                    <h2 className="login-header logo-text">Create a Playlist</h2>
+                    <CreatePlaylistForm />
                 </div>
             </main>
             <footer className="login-footer">

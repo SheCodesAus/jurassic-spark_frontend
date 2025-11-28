@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import './HomePage.css';
 import vibelabLogo from '../assets/VibeLab.png';
 import technoIcon from '../assets/Techno.png';
@@ -36,14 +37,18 @@ const HomePage = () => (
                 </div>
             </div>
             <div className="hero-actions">
-                <button className="btn btn-primary hero-btn">
-                    <span>Create a </span>
-                    <span>Playlist</span>
-                </button>
-                <button className="btn btn-orange hero-btn">
-                    <span>Make an </span>
-                    <span>Account</span>
-                </button>
+                <Link to="/spotify">
+                    <button className="btn btn-primary hero-btn">
+                        <span>Create a </span>
+                        <span>Playlist</span>
+                    </button>
+                </Link>
+                <Link to="/signup">
+                    <button className="btn btn-orange hero-btn">
+                        <span>Make an </span>
+                        <span>Account</span>
+                    </button>
+                </Link>
             </div>
         </section>
     </div>
