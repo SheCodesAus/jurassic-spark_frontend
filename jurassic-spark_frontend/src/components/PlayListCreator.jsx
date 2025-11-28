@@ -1,8 +1,9 @@
 
-// src/components/PlaylistCreator.jsx
+// src/components/PlayListCreator.jsx
 import React, { useState } from "react";
 import { getAccessToken } from "../services/spotifyAuth";
 import { login } from "../services/spotifyAuth";
+import { savePlaylistToBackend } from "../services/playlistService";
 import vibelabLogo from "../assets/VibeLab.png";
 import "./CreatePlaylistForm.css";
 
@@ -20,6 +21,9 @@ export default function PlaylistCreator() {
 
     const [selectedTracks, setSelectedTracks] = useState([]);
     const [status, setStatus] = useState("");
+    const [playlistId, setPlaylistId] = useState(null);
+    const [userId, setUserId] = useState(null);
+    const [isSavingToBackend, setIsSavingToBackend] = useState(false);
 
     const token = getAccessToken();
 
@@ -90,6 +94,35 @@ export default function PlaylistCreator() {
         setShowDropdown(false);
         setSubmitted(false);
         setStatus("");
+        setPlaylistId(null);
+    }
+
+    // --- Save playlist to backend ---
+    async function handleSaveToBackend() {
+        if (!playlistId || !userId) {
+            setStatus("Error: Playlist ID or User ID missing");
+            return;
+        }
+
+        setIsSavingToBackend(true);
+        try {
+            const playlistData = {
+                id: playlistId,
+                name: playlistName,
+                description: playlistDesc || `Vibe: ${vibe}`,
+                uri: `spotify:playlist:${playlistId}`,
+                images: [],
+                tracks: { total: selectedTracks.length }
+            };
+
+            await savePlaylistToBackend(userId, playlistData);
+            setStatus("✅ Playlist saved to your account!");
+        } catch (err) {
+            console.error(err);
+            setStatus("⚠️ Failed to save to backend. You can still play the playlist!");
+        } finally {
+            setIsSavingToBackend(false);
+        }
     }
 
     // --- Create playlist & add tracks ---
@@ -111,6 +144,7 @@ export default function PlaylistCreator() {
         });
         const meData = await meResp.json();
         const userId = meData.id;
+        setUserId(userId);
 
         // Create playlist
         const playlistResp = await fetch(
@@ -137,6 +171,7 @@ export default function PlaylistCreator() {
         }
         const playlistData = await playlistResp.json();
         const playlistId = playlistData.id;
+        setPlaylistId(playlistId);
 
         // Add tracks
         const addResp = await fetch(
@@ -299,11 +334,11 @@ export default function PlaylistCreator() {
             style={{
             marginTop: "2rem",
             background: "#f9f9f9",
-            padding: "1rem",
+            padding: "1.5rem",
             borderRadius: "0.5rem",
             }}
         >
-            <h2>Playlist Summary</h2>
+            <h2>✅ Playlist Created!</h2>
             <p>
             <strong>Name:</strong> {playlistName}
             </p>
@@ -314,8 +349,47 @@ export default function PlaylistCreator() {
             <strong>Vibe:</strong> {vibe}
             </p>
             <p>
-            <strong>Tracks:</strong> {selectedTracks.length}
+            <strong>Tracks Added:</strong> {selectedTracks.length}
             </p>
+            
+            {selectedTracks.length > 0 && (
+            <div style={{ marginTop: "1rem" }}>
+                <h4>Tracks in Playlist:</h4>
+                <ul style={{ listStyle: "none", padding: 0 }}>
+                {selectedTracks.map((uri, idx) => {
+                    const track = searchResults.find((t) => t.uri === uri);
+                    return (
+                    <li key={uri} style={{ padding: "0.5rem 0", borderBottom: "1px solid #ddd" }}>
+                        <strong>{idx + 1}.</strong> {track ? `${track.name}` : "Unknown Track"}
+                        <br />
+                        <small style={{ color: "#666" }}>
+                        {track ? `${track.artists.map((a) => a.name).join(", ")}` : "Unknown Artist"}
+                        </small>
+                    </li>
+                    );
+                })}
+                </ul>
+            </div>
+            )}
+
+            <button
+            type="button"
+            onClick={resetForm}
+            className="btn btn-primary"
+            style={{ marginTop: "1rem" }}
+            >
+            Create Another Playlist
+            </button>
+
+            <button
+            type="button"
+            onClick={handleSaveToBackend}
+            className="btn btn-orange"
+            style={{ marginTop: "1rem", marginLeft: "1rem" }}
+            disabled={isSavingToBackend}
+            >
+            {isSavingToBackend ? "Saving..." : "💾 Save Playlist"}
+            </button>
         </div>
         )}
     </div>

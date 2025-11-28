@@ -6,9 +6,10 @@ import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import CreatePlaylistPage from './pages/CreatePlaylistPage';
+import MyPlaylists from './pages/MyPlaylists';
 import Callback from "./pages/Callback";
 import './Master.css';
-import PlaylistCreator from './components/PlaylistCreator';
+import PlayListCreator from './components/PlayListCreator';
 
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/playlists" element={<CreatePlaylistPage />} />
+        <Route path="/my-playlists" element={<MyPlaylists />} />
 
         {/* ✅ New routes for Spotify testing */}
         <Route
@@ -27,7 +29,7 @@ function App() {
           element={
             <div style={{ padding: '2rem' }}>
               <h1>Spotify Integration</h1>
-              <PlaylistCreator />
+              <PlayListCreator />
             </div>
           }
         />
