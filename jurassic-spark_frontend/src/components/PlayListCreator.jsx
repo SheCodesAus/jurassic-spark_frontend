@@ -204,7 +204,7 @@ export default function PlaylistCreator() {
     <div className="card login-card">
         <div className="logo-container">
         <img src={vibelabLogo} alt="VibeLab Logo" className="form-logo" />
-        <h2 className="text-center mb-2">Create a Playlist in Spotify</h2>
+        <h2 className="text-center mb-2">Create your Playlist</h2>
         </div>
 
         {/* ✅ Conditional rendering */}

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getAccessToken, login } from '../services/spotifyAuth';
 import SpotifyPlayer from '../components/SpotifyPlayer';
-import '../pages/HomePage.css';
+import '../pages/LoginPage.css';
 
 const MyPlaylists = () => {
     const [playlists, setPlaylists] = useState([]);
@@ -43,155 +43,149 @@ const MyPlaylists = () => {
             setLoading(false);
         }
     }
+    // Real Spotify search state for the card
+    const [searchTerm, setSearchTerm] = useState("");
+    const [searchResults, setSearchResults] = useState([]);
+    const [showDropdown, setShowDropdown] = useState(false);
+    const [selectedSong, setSelectedSong] = useState(null);
+    const [searchStatus, setSearchStatus] = useState("");
+
+    async function handleSearch(e) {
+        const value = e.target.value;
+        setSearchTerm(value);
+
+        if (!token) {
+            setSearchStatus("Please log in with Spotify first.");
+            setShowDropdown(false);
+            return;
+        }
+
+        if (value.trim().length < 2) {
+            setSearchResults([]);
+            setShowDropdown(false);
+            return;
+        }
+
+        try {
+            const resp = await fetch(
+                `https://api.spotify.com/v1/search?q=${encodeURIComponent(value)}&type=track&limit=10`,
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+            if (!resp.ok) {
+                const text = await resp.text();
+                throw new Error(`Search failed: ${text}`);
+            }
+            const data = await resp.json();
+            const tracks = data.tracks?.items || [];
+            const results = tracks.map((track) => ({
+                title: track.name,
+                artist: track.artists.map((a) => a.name).join(", "),
+                id: track.id,
+                uri: track.uri,
+                album: track.album?.name,
+                image: track.album?.images?.[2]?.url || track.album?.images?.[0]?.url || ""
+            }));
+            setSearchResults(results);
+            setShowDropdown(true);
+            setSearchStatus("");
+        } catch (err) {
+            setSearchStatus("Error searching Spotify tracks.");
+            setSearchResults([]);
+            setShowDropdown(false);
+        }
+    }
+
+    function handleSelectSong(song) {
+        setSelectedSong(song);
+        setSearchTerm(`${song.title} by ${song.artist}`);
+        setSearchResults([]);
+        setShowDropdown(false);
+    }
 
     return (
-        <div style={{ padding: "2rem", fontFamily: "system-ui, sans-serif" }}>
-            <h1>My Playlists</h1>
-
-            {selectedPlaylist && (
-                <div style={{ marginBottom: "2rem", padding: "1rem", background: "#f5f5f5", borderRadius: "0.5rem" }}>
-                    <SpotifyPlayer playlistUri={selectedPlaylist.uri} playlistName={selectedPlaylist.name} />
-                    <button
-                        onClick={() => setSelectedPlaylist(null)}
-                        style={{
-                            marginTop: "1rem",
-                            padding: "0.5rem 1rem",
-                            background: "#ddd",
-                            border: "1px solid #999",
-                            borderRadius: "0.25rem",
-                            cursor: "pointer",
-                        }}
-                    >
-                        Close Player
-                    </button>
-                </div>
-            )}
-
-            {!token ? (
-                <div style={{ textAlign: "center", padding: "2rem" }}>
-                    <p>Please log in with Spotify to view your playlists.</p>
-                    <button
-                        onClick={login}
-                        className="btn btn-orange"
-                        style={{ padding: "0.75rem 1.5rem", fontSize: "1rem" }}
-                    >
-                        Login with Spotify
-                    </button>
-                </div>
-            ) : (
-                <>
-                    <button
-                        onClick={fetchPlaylists}
-                        className="btn btn-primary"
-                        style={{ marginBottom: "1rem", padding: "0.5rem 1rem" }}
-                        disabled={loading}
-                    >
-                        {loading ? "Loading..." : "Refresh Playlists"}
-                    </button>
-
-                    {error && (
-                        <div style={{ color: "red", padding: "1rem", marginBottom: "1rem" }}>
-                            {error}
-                        </div>
-                    )}
-
-                    {playlists.length === 0 && !loading && !error && (
-                        <p style={{ color: "#666" }}>No playlists found. Create one to get started!</p>
-                    )}
-
-                    <div
-                        style={{
-                            display: "grid",
-                            gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
-                            gap: "1.5rem",
-                            marginTop: "2rem",
-                        }}
-                    >
-                        {playlists.map((playlist) => (
-                            <div
-                                key={playlist.id}
-                                style={{
-                                    border: "1px solid #ddd",
-                                    borderRadius: "0.5rem",
-                                    padding: "1rem",
-                                    background: "#fff",
-                                    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-                                    cursor: "pointer",
-                                    transition: "transform 0.2s, box-shadow 0.2s",
-                                }}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.transform = "translateY(-5px)";
-                                    e.currentTarget.style.boxShadow = "0 4px 8px rgba(0,0,0,0.15)";
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.transform = "translateY(0)";
-                                    e.currentTarget.style.boxShadow = "0 2px 4px rgba(0,0,0,0.1)";
-                                }}
-                                onClick={() => setSelectedPlaylist(playlist)}
-                            >
-                                {/* Playlist Image */}
-                                {playlist.images && playlist.images.length > 0 && (
-                                    <img
-                                        src={playlist.images[0].url}
-                                        alt={playlist.name}
-                                        style={{
-                                            width: "100%",
-                                            height: "200px",
-                                            objectFit: "cover",
-                                            borderRadius: "0.25rem",
-                                            marginBottom: "1rem",
-                                        }}
-                                    />
-                                )}
-
-                                {/* Playlist Info */}
-                                <h3 style={{ margin: "0.5rem 0", fontSize: "1.1rem" }}>
-                                    {playlist.name}
-                                </h3>
-
-                                <p style={{ margin: "0.5rem 0", color: "#666", fontSize: "0.9rem" }}>
-                                    <strong>Tracks:</strong> {playlist.tracks.total}
-                                </p>
-
-                                {playlist.description && (
-                                    <p
-                                        style={{
-                                            margin: "0.5rem 0",
-                                            color: "#888",
-                                            fontSize: "0.85rem",
-                                            overflow: "hidden",
-                                            textOverflow: "ellipsis",
-                                            whiteSpace: "nowrap",
-                                        }}
-                                    >
-                                        {playlist.description}
-                                    </p>
-                                )}
-
-                                <p style={{ margin: "0.5rem 0", color: "#999", fontSize: "0.8rem" }}>
-                                    <strong>Owner:</strong> {playlist.owner.display_name}
-                                </p>
-
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        window.open(playlist.external_urls.spotify, '_blank');
-                                    }}
-                                    className="btn btn-orange"
-                                    style={{
-                                        width: "100%",
-                                        marginTop: "1rem",
-                                        padding: "0.5rem",
-                                        fontSize: "0.9rem",
-                                    }}
-                                >
-                                    Open in Spotify
-                                </button>
+        <div className="login-page">
+            <main className="login-main">
+                <div className="login-container">
+                    <h2 className="login-header logo-text">My Playlists</h2>
+                    {/* Mock playlist card for styling */}
+                    <div style={{
+                        border: "2px solid #5A2FCF",
+                        borderRadius: "1rem",
+                        background: "#fff",
+                        boxShadow: "0 4px 16px rgba(90,47,207,0.08)",
+                        padding: "2rem",
+                        marginBottom: "2rem",
+                        maxWidth: "420px",
+                        margin: "0 auto 2rem auto"
+                    }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+                            <img src="/src/assets/VibeLab.png" alt="Vibe Logo" style={{ width: "60px", height: "60px", borderRadius: "50%" }} />
+                            <div>
+                                <h3 style={{ margin: 0, fontSize: "1.5rem", color: "#5A2FCF" }}>VibeLab Vibes</h3>
+                                <p style={{ margin: 0, color: "#888" }}>Vibe: Pop</p>
                             </div>
-                        ))}
+                        </div>
+                        <p style={{ marginTop: "1rem", color: "#333" }}><strong>Description:</strong> My favorite pop tracks for coding!</p>
+                        <div style={{ marginTop: "1rem" }}>
+                            <strong>Songs:</strong>
+                            <ul style={{ paddingLeft: "1.2rem", margin: "0.5rem 0" }}>
+                                <li>Blinding Lights - The Weeknd</li>
+                                <li>Levitating - Dua Lipa</li>
+                                <li>Shape of You - Ed Sheeran</li>
+                            </ul>
+                        </div>
+                        {/* Search bar and dropdown above Add Song button */}
+                        <div style={{ marginTop: "1rem", position: "relative" }}>
+                            <input
+                                type="text"
+                                value={searchTerm}
+                                onChange={handleSearch}
+                                placeholder="Search for a song..."
+                                style={{ width: "100%", padding: "0.5rem", borderRadius: "0.25rem", border: "1px solid #ccc" }}
+                            />
+                            {showDropdown && searchResults.length > 0 && (
+                                <ul style={{
+                                    position: "absolute",
+                                    top: "2.5rem",
+                                    left: 0,
+                                    width: "100%",
+                                    background: "#fff",
+                                    border: "1px solid #ddd",
+                                    borderRadius: "0.25rem",
+                                    boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                                    zIndex: 10,
+                                    listStyle: "none",
+                                    margin: 0,
+                                    padding: 0
+                                }}>
+                                    {searchResults.map((song, idx) => (
+                                        <li
+                                            key={song.id || idx}
+                                            onClick={() => handleSelectSong(song)}
+                                            style={{ padding: "0.5rem 1rem", cursor: "pointer", borderBottom: "1px solid #eee", display: "flex", alignItems: "center" }}
+                                        >
+                                            {song.image && (
+                                                <img src={song.image} alt="album cover" style={{ width: "32px", height: "32px", borderRadius: "4px", marginRight: "0.5rem" }} />
+                                            )}
+                                            <span style={{ fontWeight: 600 }}>{song.title}</span> <span style={{ color: "#888", marginLeft: "0.5rem" }}>by {song.artist}</span>
+                                            {song.album && (
+                                                <span style={{ color: "#aaa", marginLeft: "0.5rem" }}>({song.album})</span>
+                                            )}
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                            {searchStatus && <div style={{ color: "#c00", marginTop: "0.5rem" }}>{searchStatus}</div>}
+                        </div>
+                        <div style={{ marginTop: "1rem", display: "flex", gap: "1rem" }}>
+                            <button className="btn btn-orange" style={{ padding: "0.5rem 1rem" }}>Add Song</button>
+                        </div>
                     </div>
-                </>
-            )}
+                    {/* ...existing code for playlists rendering... */}
+                </div>
+            </main>
         </div>
     );
 };

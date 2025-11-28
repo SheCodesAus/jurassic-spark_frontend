@@ -30,7 +30,7 @@ const NavBar = () => {
       {/* Nav links */}
       <ul className={`navbar-links ${menuOpen ? 'open' : ''}`}>
         <li><Link to="/">Home</Link></li>
-        <li><Link to="/spotify">Playlist with Spotify</Link></li>
+        <li><Link to="/spotify">Create a playlist </Link></li>
         <li><Link to="/my-playlists">My Playlists</Link></li>
         <li><Link to="/login">Login</Link></li>
         <li><Link to="/signup">Sign Up</Link></li>

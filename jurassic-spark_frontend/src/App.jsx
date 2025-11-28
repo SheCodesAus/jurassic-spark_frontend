@@ -27,9 +27,12 @@ function App() {
         <Route
           path="/spotify"
           element={
-            <div style={{ padding: '2rem' }}>
-              <h1>Spotify Integration</h1>
-              <PlayListCreator />
+            <div className="login-page">
+              <div className="login-main">
+                <div className="login-container">
+                  <PlayListCreator />
+                </div>
+              </div>
             </div>
           }
         />
