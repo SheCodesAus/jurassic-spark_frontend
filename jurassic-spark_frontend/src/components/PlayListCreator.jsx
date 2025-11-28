@@ -169,13 +169,12 @@ export default function PlaylistCreator() {
     <div className="card login-card">
         <div className="logo-container">
         <img src={vibelabLogo} alt="VibeLab Logo" className="form-logo" />
-        <h2 className="text-center mb-2">Create a Playlist</h2>
+        <h2 className="text-center mb-2">Create a Playlist in Spotify</h2>
         </div>
 
         {/* ✅ Conditional rendering */}
         {!token ? (
         <>
-            <p className="text-center mb-3">Please log in to Spotify to create a playlist.</p>
             <button onClick={login} className="btn btn-orange login-btn mb-3">
             Login with Spotify
             </button>
