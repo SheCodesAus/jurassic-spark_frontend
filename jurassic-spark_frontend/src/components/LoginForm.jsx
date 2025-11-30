@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import './LoginForm.css';
 import vibelabLogo from '../assets/VibeLab.png';
 
+
+
 const LoginForm = () => {
     const [formData, setFormData] = useState({
         username: '',
@@ -10,6 +12,8 @@ const LoginForm = () => {
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false);
 
+    const apiUrl = import.meta.env.VITE_JURASSIC_SPARK_BACKEND_API_URL;
+
     // Handle input changes
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -17,7 +21,7 @@ const LoginForm = () => {
             ...prev,
             [name]: value
         }));
-        
+
         // Clear error when user starts typing
         if (errors[name]) {
             setErrors(prev => ({
@@ -48,7 +52,7 @@ const LoginForm = () => {
     // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         if (!validateForm()) {
             return;
         }
@@ -57,7 +61,7 @@ const LoginForm = () => {
 
         try {
             // Replace with your actual API endpoint
-            const response = await fetch('/api/login', {
+            const response = await fetch(`${apiUrl}api/token/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -68,6 +72,12 @@ const LoginForm = () => {
             if (response.ok) {
                 const data = await response.json();
                 console.log('Login successful:', data);
+
+                // Store tokens in localStorage after successful login
+                localStorage.setItem('access_token', data.access);
+                localStorage.setItem('refresh_token', data.refresh);
+
+
             } else {
                 const errorData = await response.json();
                 setErrors({ general: errorData.message || 'Login failed. Please try again.' });
@@ -82,7 +92,7 @@ const LoginForm = () => {
     // Handle input blur for real-time validation
     const handleBlur = (e) => {
         const { name, value } = e.target;
-        
+
         if (name === 'username' && !value.trim()) {
             setErrors(prev => ({ ...prev, username: 'Username is required' }));
         } else if (name === 'password') {
@@ -96,18 +106,18 @@ const LoginForm = () => {
 
     return (
         <div className="card login-card">
-            
-        <div className="logo-container">
-            <img 
-                src={vibelabLogo} 
-                alt="VibeLab Logo" 
-                className="form-logo"
-            />
-            <h2 className="text-center mb-2">Welcome Back!</h2>
-        </div>
-            
+
+            <div className="logo-container">
+                <img
+                    src={vibelabLogo}
+                    alt="VibeLab Logo"
+                    className="form-logo"
+                />
+                <h2 className="text-center mb-2">Welcome Back!</h2>
+            </div>
+
             <p className="text-center mb-3 subtitle">Ready to create the perfect vibe?</p>
-            
+
             <form onSubmit={handleSubmit} className="login-form">
                 {errors.general && (
                     <div className="error-message general-error mb-2">
@@ -118,10 +128,10 @@ const LoginForm = () => {
                 {/* Username Field */}
                 <div className="form-group">
                     <label htmlFor="username">Username</label>
-                    <input 
-                        type="text" 
-                        id="username" 
-                        name="username" 
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
                         placeholder="Enter your username"
                         value={formData.username}
                         onChange={handleChange}
@@ -137,10 +147,10 @@ const LoginForm = () => {
                 {/* Password Field */}
                 <div className="form-group">
                     <label htmlFor="password">Password</label>
-                    <input 
-                        type="password" 
-                        id="password" 
-                        name="password" 
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
                         placeholder="Enter your password"
                         value={formData.password}
                         onChange={handleChange}
@@ -154,8 +164,8 @@ const LoginForm = () => {
                 </div>
 
                 {/* Login Button */}
-                <button 
-                    type="submit" 
+                <button
+                    type="submit"
                     className={`btn btn-primary login-btn mb-3 ${isLoading ? 'btn-loading' : ''}`}
                     disabled={isLoading}
                 >

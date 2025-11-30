@@ -4,7 +4,7 @@ import vibelabLogo from '../assets/VibeLab.png';
 
 const SignupForm = () => {
     const [formData, setFormData] = useState({
-        name: '',
+        first_name: '',
         last_name: '',
         username: '',
         password: '',
@@ -12,6 +12,7 @@ const SignupForm = () => {
     });
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false);
+    const apiUrl = import.meta.env.VITE_JURASSIC_SPARK_BACKEND_API_URL;
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -29,7 +30,7 @@ const SignupForm = () => {
 
     const validateForm = () => {
         const newErrors = {};
-        if (!formData.name.trim()) newErrors.name = 'First name is required';
+        if (!formData.first_name.trim()) newErrors.name = 'First name is required';
         if (!formData.last_name.trim()) newErrors.last_name = 'Last name is required';
         if (!formData.username.trim()) newErrors.username = 'Username is required';
         if (!formData.password.trim()) {
@@ -52,14 +53,15 @@ const SignupForm = () => {
         setIsLoading(true);
         try {
             // Replace with your actual API endpoint
-            const response = await fetch('/api/register', {
+            const response = await fetch(`${apiUrl}/api/users/register/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    name: formData.name,
+                    first_name: formData.first_name,
                     last_name: formData.last_name,
                     username: formData.username,
-                    password: formData.password
+                    password: formData.password,
+                    password2: formData.confirmPassword
                 })
             });
             if (response.ok) {
@@ -94,10 +96,10 @@ const SignupForm = () => {
                     <label htmlFor="name">First Name</label>
                     <input
                         type="text"
-                        id="name"
-                        name="name"
+                        id="first_name"
+                        name="first_name"
                         placeholder="Enter your first name"
-                        value={formData.name}
+                        value={formData.first_name}
                         onChange={handleChange}
                         className={errors.name ? 'error' : ''}
                         required
