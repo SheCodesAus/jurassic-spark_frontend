@@ -7,9 +7,11 @@ import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import CreatePlaylistPage from './pages/CreatePlaylistPage';
 import MyPlaylists from './pages/MyPlaylists';
+import MyPlaylists from "./components/MyPlaylists";
 import Callback from "./pages/Callback";
 import './Master.css';
 import PlayListCreator from './components/PlayListCreator';
+
 
 
 function App() {
@@ -22,6 +24,7 @@ function App() {
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/playlists" element={<CreatePlaylistPage />} />
         <Route path="/my-playlists" element={<MyPlaylists />} />
+        <Route path="/share/:playlistId/:token" element={<SharedPlaylist />} />
 
         {/* ✅ New routes for Spotify testing */}
         <Route
