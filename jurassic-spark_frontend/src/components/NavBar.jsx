@@ -1,33 +1,19 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import './NavBar.css';
 
 import Logo from '../assets/VibeLab_mobile.png';
 import NoteIcon from '../assets/Note.png';
-import useAuth from '../hooks/useAuth';
 
 const NavBar = () => {
-
-  const { auth, setAuth } = useAuth();
-  const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false);
-
-  const handleLogout = () => {
-    // clear tokens from local storage
-    window.localStorage.removeItem("access_token");
-    window.localStorage.removeItem("refresh_token");
-    //clear auth context
-    setAuth({ access_token: null, refresh_token: null });
-    //redirect to home
-    navigate('/')
-  };
 
   return (
     <nav className="navbar">
       {/* Logo and Title together */}
       <div className="navbar-brand">
         <Link to="/">
-          <img src={Logo} alt="VibeLab Logo" className="logo-img" />
+            <img src={Logo} alt="VibeLab Logo" className="logo-img" />
         </Link>
         <span className="navbar-title">VibeLab</span>
       </div>
@@ -46,18 +32,8 @@ const NavBar = () => {
         <li><Link to="/">Home</Link></li>
         <li><Link to="/spotify">Create a playlist </Link></li>
         <li><Link to="/my-playlists">My Playlists</Link></li>
-
-        {auth.access_token && auth.refresh_token ? (
-          <li>
-            <Link to="/" onClick={handleLogout}>Logout</Link>
-          </li>
-        ) : (
-          <>
-            <li><Link to="/login">Login</Link></li>
-            <li><Link to="/signup">Sign Up</Link></li>
-          </>
-        )}
-
+        <li><Link to="/login">Login</Link></li>
+        <li><Link to="/signup">Sign Up</Link></li>
       </ul>
     </nav>
   );

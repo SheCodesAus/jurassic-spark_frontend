@@ -1,14 +1,10 @@
 import React, { useState } from 'react';
 import './LoginForm.css';
 import vibelabLogo from '../assets/VibeLab.png';
-import { useNavigate } from "react-router";
 
 const SignupForm = () => {
-
-    const navigate = useNavigate();
-
     const [formData, setFormData] = useState({
-        first_name: '',
+        name: '',
         last_name: '',
         username: '',
         password: '',
@@ -16,7 +12,6 @@ const SignupForm = () => {
     });
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false);
-    const apiUrl = import.meta.env.VITE_JURASSIC_SPARK_BACKEND_API_URL;
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -34,7 +29,7 @@ const SignupForm = () => {
 
     const validateForm = () => {
         const newErrors = {};
-        if (!formData.first_name.trim()) newErrors.name = 'First name is required';
+        if (!formData.name.trim()) newErrors.name = 'First name is required';
         if (!formData.last_name.trim()) newErrors.last_name = 'Last name is required';
         if (!formData.username.trim()) newErrors.username = 'Username is required';
         if (!formData.password.trim()) {
@@ -57,24 +52,20 @@ const SignupForm = () => {
         setIsLoading(true);
         try {
             // Replace with your actual API endpoint
-            const response = await fetch(`${apiUrl}/api/users/register/`, {
+            const response = await fetch('/api/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    first_name: formData.first_name,
+                    name: formData.name,
                     last_name: formData.last_name,
                     username: formData.username,
-                    password: formData.password,
-                    password2: formData.confirmPassword
+                    password: formData.password
                 })
             });
             if (response.ok) {
                 const data = await response.json();
                 console.log('Registration successful:', data);
-
-                // Redirect to login page after successful signup as signup doesn't assign tokens
-                navigate('/login');
-
+                // Optionally redirect or show success message
             } else {
                 const errorData = await response.json();
                 setErrors({ general: errorData.message || 'Registration failed. Please try again.' });
@@ -103,10 +94,10 @@ const SignupForm = () => {
                     <label htmlFor="name">First Name</label>
                     <input
                         type="text"
-                        id="first_name"
-                        name="first_name"
+                        id="name"
+                        name="name"
                         placeholder="Enter your first name"
-                        value={formData.first_name}
+                        value={formData.name}
                         onChange={handleChange}
                         className={errors.name ? 'error' : ''}
                         required

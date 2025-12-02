@@ -12,7 +12,6 @@ import './Master.css';
 import PlayListCreator from './components/PlayListCreator';
 
 
-
 function App() {
   return (
     <Router>
