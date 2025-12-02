@@ -7,7 +7,6 @@ import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import CreatePlaylistPage from './pages/CreatePlaylistPage';
 import MyPlaylists from './pages/MyPlaylists';
-import MyPlaylists from "./components/MyPlaylists";
 import Callback from "./pages/Callback";
 import './Master.css';
 import PlayListCreator from './components/PlayListCreator';

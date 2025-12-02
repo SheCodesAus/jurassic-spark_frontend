@@ -60,3 +60,46 @@ export default function MyPlaylists() {
                         style={{
                             padding: "1rem",
                             border: "1px solid #ddd",
+                            borderRadius: "8px",
+                            marginBottom: "1rem"
+                        }}
+                    >
+                        <h3>{p.name}</h3>
+                        <p>{p.description}</p>
+
+                        <button
+                            className="btn btn-orange"
+                            onClick={() => handleShare(p.id)}
+                            disabled={loadingShare}
+                        >
+                            {loadingShare ? "Generating..." : "Share Playlist"}
+                        </button>
+
+                        {shareLink && (
+                            <div
+                                style={{
+                                    background: "#f9f9f9",
+                                    padding: "0.7rem",
+                                    marginTop: "1rem",
+                                    borderRadius: "6px"
+                                }}
+                            >
+                                <strong>Share this link:</strong>
+                                <br />
+                                <input
+                                    value={shareLink}
+                                    readOnly
+                                    style={{
+                                        width: "100%",
+                                        marginTop: "0.5rem",
+                                        padding: "0.5rem"
+                                    }}
+                                />
+                            </div>
+                        )}
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
+}
