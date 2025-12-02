@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import './LoginForm.css';
 import vibelabLogo from '../assets/VibeLab.png';
-
-
+import { useNavigate } from "react-router";
+import useAuth from '../hooks/useAuth';
 
 const LoginForm = () => {
+
+
+    const { setAuth } = useAuth();
+
     const [formData, setFormData] = useState({
         username: '',
         password: ''
@@ -13,6 +17,8 @@ const LoginForm = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const apiUrl = import.meta.env.VITE_JURASSIC_SPARK_BACKEND_API_URL;
+
+    const navigate = useNavigate();
 
     // Handle input changes
     const handleChange = (e) => {
@@ -77,6 +83,11 @@ const LoginForm = () => {
                 localStorage.setItem('access_token', data.access);
                 localStorage.setItem('refresh_token', data.refresh);
 
+                //update auth context
+                setAuth({ access_token: data.access, refresh_token: data.refresh });
+
+                // Redirect to home page 
+                navigate('/')
 
             } else {
                 const errorData = await response.json();
