@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import './LoginForm.css';
 import vibelabLogo from '../assets/VibeLab.png';
+import { useNavigate } from "react-router";
 
 const SignupForm = () => {
+
+    const navigate = useNavigate();
+
     const [formData, setFormData] = useState({
         first_name: '',
         last_name: '',
@@ -67,7 +71,10 @@ const SignupForm = () => {
             if (response.ok) {
                 const data = await response.json();
                 console.log('Registration successful:', data);
-                // Optionally redirect or show success message
+
+                // Redirect to login page after successful signup as signup doesn't assign tokens
+                navigate('/login');
+
             } else {
                 const errorData = await response.json();
                 setErrors({ general: errorData.message || 'Registration failed. Please try again.' });
