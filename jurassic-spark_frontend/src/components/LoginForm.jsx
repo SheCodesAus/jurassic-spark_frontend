@@ -17,6 +17,7 @@ const LoginForm = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const apiUrl = import.meta.env.VITE_JURASSIC_SPARK_BACKEND_API_URL;
+    console.log("LoginForm apiURL:", apiUrl);
 
     const navigate = useNavigate();
 
@@ -67,7 +68,7 @@ const LoginForm = () => {
 
         try {
             // Replace with your actual API endpoint
-            const response = await fetch(`${apiUrl}api/token/`, {
+            const response = await fetch(`${apiUrl}/api/token/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
