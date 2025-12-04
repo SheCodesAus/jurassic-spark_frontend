@@ -17,6 +17,7 @@ const SignupForm = () => {
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false);
     const apiUrl = import.meta.env.VITE_JURASSIC_SPARK_BACKEND_API_URL;
+    console.log("SignupForm apiURL", apiUrl);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
