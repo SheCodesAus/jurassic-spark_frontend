@@ -1,4 +1,3 @@
-
 // src/components/PlayListCreator.jsx
 import React, { useState } from "react";
 import { getAccessToken } from "../services/spotifyAuth";
@@ -32,41 +31,35 @@ export default function PlaylistCreator() {
         const value = e.target.value;
         setSearchTerm(value);
 
-        if (!token) {
-        setStatus("Please log in with Spotify first.");
-        setShowDropdown(false);
-        return;
-        }
-
         // Only search when at least 2 characters
         if (value.trim().length < 2) {
-        setSearchResults([]);
-        setShowDropdown(false);
-        return;
+            setSearchResults([]);
+            setShowDropdown(false);
+            return;
         }
 
         try {
-        const resp = await fetch(
-            `https://api.spotify.com/v1/search?q=${encodeURIComponent(
-            value
-            )}&type=track&limit=10`,
-            {
-            headers: { Authorization: `Bearer ${token}` },
+            const resp = await fetch(
+                `https://api.spotify.com/v1/search?q=${encodeURIComponent(
+                value
+                )}&type=track&limit=10`,
+                {
+                headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+            if (!resp.ok) {
+                const text = await resp.text();
+                throw new Error(`Search failed: ${text}`);
             }
-        );
-        if (!resp.ok) {
-            const text = await resp.text();
-            throw new Error(`Search failed: ${text}`);
-        }
-        const data = await resp.json();
-        const items = data?.tracks?.items ?? [];
-        setSearchResults(items);
-        setShowDropdown(items.length > 0);
-        setStatus("");
+            const data = await resp.json();
+            const items = data?.tracks?.items ?? [];
+            setSearchResults(items);
+            setShowDropdown(items.length > 0);
+            setStatus("");
         } catch (err) {
-        console.error(err);
-        setStatus("Search failed. Try again.");
-        setShowDropdown(false);
+            console.error(err);
+            setStatus("Search failed. Try again.");
+            setShowDropdown(false);
         }
     }
 

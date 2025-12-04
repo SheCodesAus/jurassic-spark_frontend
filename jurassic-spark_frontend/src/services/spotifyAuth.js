@@ -1,3 +1,41 @@
+/**
+ * Get a Spotify access token using Client Credentials flow (not tied to a user)
+ * Stores/retrieves token from localStorage
+ */
+export async function getSpotifyClientCredentialAccessToken() {
+    const TOKEN_STORE_KEY = "spotify_client_access_token";
+    const TOKEN_EXPIRY_KEY = "spotify_client_access_token_expiry";
+
+    // Check if token exists and is valid
+    const token = localStorage.getItem(TOKEN_STORE_KEY);
+    const expiry = localStorage.getItem(TOKEN_EXPIRY_KEY);
+    if (token && expiry && Date.now() < Number(expiry)) {
+        return token;
+    }
+
+    // Request new token
+    const body = new URLSearchParams({
+        grant_type: "client_credentials",
+        client_id: CLIENT_ID,
+        client_secret: CLIENT_SECRET,
+    });
+    const resp = await fetch(TOKEN_URL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body,
+    });
+    if (!resp.ok) {
+        throw new Error("Failed to get client credentials token");
+    }
+    const data = await resp.json();
+    const accessToken = data.access_token;
+    const expiresIn = data.expires_in; // seconds
+    localStorage.setItem(TOKEN_STORE_KEY, accessToken);
+    localStorage.setItem(TOKEN_EXPIRY_KEY, String(Date.now() + expiresIn * 1000));
+    return accessToken;
+}
 // src/services/spotifyAuth.js
 
 // Read values from Vite env (NOT process.env)

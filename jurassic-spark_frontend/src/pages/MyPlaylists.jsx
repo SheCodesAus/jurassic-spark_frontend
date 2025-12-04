@@ -3,6 +3,9 @@ import { getAccessToken, login } from '../services/spotifyAuth';
 import SpotifyPlayer from '../components/SpotifyPlayer';
 import '../pages/LoginPage.css';
 
+// Dummy userId for demo; replace with real user auth
+const userId = 'demo-owner-id';
+
 const MyPlaylists = () => {
     const [playlists, setPlaylists] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -104,13 +107,44 @@ const MyPlaylists = () => {
         setShowDropdown(false);
     }
 
+    // Helper: Save playlist to Spotify and open it
+    async function handleSaveToSpotify(playlist) {
+        try {
+            // You need to implement the actual upload logic here
+            // For demo, just open the playlist in Spotify
+            if (playlist.external_urls && playlist.external_urls.spotify) {
+                window.open(playlist.external_urls.spotify, '_blank');
+            } else {
+                alert('No Spotify URL found for this playlist.');
+            }
+        } catch (err) {
+            alert('Failed to save playlist to Spotify.');
+        }
+    }
+
+    // Add a mock playlist for testing
+    const mockPlaylist = {
+        id: 'mock123',
+        name: 'Test Playlist',
+        description: 'A playlist for testing the Save to Spotify button.',
+        images: [{ url: '/src/assets/VibeLab.png' }],
+        vibe: 'Pop',
+        tracks: {
+            items: [
+                { track: { id: '1', name: 'Test Song', artists: [{ name: 'Test Artist' }] } }
+            ]
+        },
+        owner: { id: userId },
+        external_urls: { spotify: 'https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M' }
+    };
+
     return (
         <div className="login-page">
             <main className="login-main">
                 <div className="login-container">
                     <h2 className="login-header logo-text">My Playlists</h2>
-                    {/* Mock playlist card for styling */}
-                    <div style={{
+                    {/* Mock playlist card for testing */}
+                    <div key={mockPlaylist.id} style={{
                         border: "2px solid #5A2FCF",
                         borderRadius: "1rem",
                         background: "#fff",
@@ -121,68 +155,83 @@ const MyPlaylists = () => {
                         margin: "0 auto 2rem auto"
                     }}>
                         <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-                            <img src="/src/assets/VibeLab.png" alt="Vibe Logo" style={{ width: "60px", height: "60px", borderRadius: "50%" }} />
+                            <img src={mockPlaylist.images?.[0]?.url} alt="Playlist" style={{ width: "60px", height: "60px", borderRadius: "50%" }} />
                             <div>
-                                <h3 style={{ margin: 0, fontSize: "1.5rem", color: "#5A2FCF" }}>VibeLab Vibes</h3>
-                                <p style={{ margin: 0, color: "#888" }}>Vibe: Pop</p>
+                                <h3 style={{ margin: 0, fontSize: "1.5rem", color: "#5A2FCF" }}>{mockPlaylist.name}</h3>
+                                <p style={{ margin: 0, color: "#888" }}>Vibe: {mockPlaylist.vibe}</p>
                             </div>
                         </div>
-                        <p style={{ marginTop: "1rem", color: "#333" }}><strong>Description:</strong> My favorite pop tracks for coding!</p>
+                        <p style={{ marginTop: "1rem", color: "#333" }}><strong>Description:</strong> {mockPlaylist.description}</p>
                         <div style={{ marginTop: "1rem" }}>
                             <strong>Songs:</strong>
                             <ul style={{ paddingLeft: "1.2rem", margin: "0.5rem 0" }}>
-                                <li>Blinding Lights - The Weeknd</li>
-                                <li>Levitating - Dua Lipa</li>
-                                <li>Shape of You - Ed Sheeran</li>
+                                {mockPlaylist.tracks.items.map((item, idx) => (
+                                    <li key={item.track.id || idx}>
+                                        {item.track.name} - {item.track.artists.map(a => a.name).join(', ')}
+                                    </li>
+                                ))}
                             </ul>
                         </div>
-                        {/* Search bar and dropdown above Add Song button */}
-                        <div style={{ marginTop: "1rem", position: "relative" }}>
-                            <input
-                                type="text"
-                                value={searchTerm}
-                                onChange={handleSearch}
-                                placeholder="Search for a song..."
-                                style={{ width: "100%", padding: "0.5rem", borderRadius: "0.25rem", border: "1px solid #ccc" }}
-                            />
-                            {showDropdown && searchResults.length > 0 && (
-                                <ul style={{
-                                    position: "absolute",
-                                    top: "2.5rem",
-                                    left: 0,
-                                    width: "100%",
-                                    background: "#fff",
-                                    border: "1px solid #ddd",
-                                    borderRadius: "0.25rem",
-                                    boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-                                    zIndex: 10,
-                                    listStyle: "none",
-                                    margin: 0,
-                                    padding: 0
-                                }}>
-                                    {searchResults.map((song, idx) => (
-                                        <li
-                                            key={song.id || idx}
-                                            onClick={() => handleSelectSong(song)}
-                                            style={{ padding: "0.5rem 1rem", cursor: "pointer", borderBottom: "1px solid #eee", display: "flex", alignItems: "center" }}
-                                        >
-                                            {song.image && (
-                                                <img src={song.image} alt="album cover" style={{ width: "32px", height: "32px", borderRadius: "4px", marginRight: "0.5rem" }} />
-                                            )}
-                                            <span style={{ fontWeight: 600 }}>{song.title}</span> <span style={{ color: "#888", marginLeft: "0.5rem" }}>by {song.artist}</span>
-                                            {song.album && (
-                                                <span style={{ color: "#aaa", marginLeft: "0.5rem" }}>({song.album})</span>
-                                            )}
+                        <div style={{ marginTop: "1rem", display: "flex", gap: "1rem" }}>
+                            <button
+                                className="btn btn-orange"
+                                style={{ padding: "0.5rem 1rem" }}
+                                onClick={() => {
+                                    if (!token) {
+                                        login();
+                                    } else {
+                                        handleSaveToSpotify(mockPlaylist);
+                                    }
+                                }}
+                            >
+                                Save to Spotify
+                            </button>
+                        </div>
+                    </div>
+                    {/* Render all playlists */}
+                    {playlists.map((playlist) => (
+                        <div key={playlist.id} style={{
+                            border: "2px solid #5A2FCF",
+                            borderRadius: "1rem",
+                            background: "#fff",
+                            boxShadow: "0 4px 16px rgba(90,47,207,0.08)",
+                            padding: "2rem",
+                            marginBottom: "2rem",
+                            maxWidth: "420px",
+                            margin: "0 auto 2rem auto"
+                        }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+                                <img src={playlist.images?.[0]?.url || "/src/assets/VibeLab.png"} alt="Playlist" style={{ width: "60px", height: "60px", borderRadius: "50%" }} />
+                                <div>
+                                    <h3 style={{ margin: 0, fontSize: "1.5rem", color: "#5A2FCF" }}>{playlist.name}</h3>
+                                    <p style={{ margin: 0, color: "#888" }}>Vibe: {playlist.vibe || 'Unknown'}</p>
+                                </div>
+                            </div>
+                            <p style={{ marginTop: "1rem", color: "#333" }}><strong>Description:</strong> {playlist.description || 'No description.'}</p>
+                            <div style={{ marginTop: "1rem" }}>
+                                <strong>Songs:</strong>
+                                <ul style={{ paddingLeft: "1.2rem", margin: "0.5rem 0" }}>
+                                    {playlist.tracks?.items?.map((item, idx) => (
+                                        <li key={item.track?.id || idx}>
+                                            {item.track?.name} - {item.track?.artists?.map(a => a.name).join(', ')}
                                         </li>
                                     ))}
                                 </ul>
+                            </div>
+                            {/* Save to Spotify button, only for owner */}
+                            {playlist.owner?.id === userId && (
+                                <div style={{ marginTop: "1rem", display: "flex", gap: "1rem" }}>
+                                    <button
+                                        className="btn btn-orange"
+                                        style={{ padding: "0.5rem 1rem" }}
+                                        onClick={() => handleSaveToSpotify(playlist)}
+                                    >
+                                        Save to Spotify
+                                    </button>
+                                </div>
                             )}
-                            {searchStatus && <div style={{ color: "#c00", marginTop: "0.5rem" }}>{searchStatus}</div>}
                         </div>
-                        <div style={{ marginTop: "1rem", display: "flex", gap: "1rem" }}>
-                            <button className="btn btn-orange" style={{ padding: "0.5rem 1rem" }}>Add Song</button>
-                        </div>
-                    </div>
+                    ))}
                     {/* ...existing code for playlists rendering... */}
                 </div>
             </main>
