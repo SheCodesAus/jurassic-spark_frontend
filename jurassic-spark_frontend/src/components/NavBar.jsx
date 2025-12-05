@@ -45,7 +45,6 @@ const NavBar = () => {
 
       {/* Nav links */}
       <ul className={`navbar-links ${menuOpen ? 'open' : ''}`}>
-        <li><Link to="/">Home</Link></li>
         <li><Link to="/spotify">Create a playlist </Link></li>
         <li><Link to="/my-playlists">My Playlists</Link></li>
 
@@ -62,7 +61,7 @@ const NavBar = () => {
           {userMenuOpen && (
             <ul className="user-dropdown">
               <li>
-                <Link to="/my-playlists" onClick={() => setUserMenuOpen(false)}>
+                <Link to="/user" onClick={() => setUserMenuOpen(false)}>
                   My Playlists
                 </Link>
               </li>

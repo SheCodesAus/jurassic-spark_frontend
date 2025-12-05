@@ -1,5 +1,7 @@
+/* Mobile-first styles */
 .userpage-container {
   min-height: 100vh;
+  width: 100vw;
   background: linear-gradient(135deg, #7245F6 0%, #5A2FCF 30%, #4f8cff 60%, #2d3a8c 100%);
   display: flex;
   flex-direction: column;
@@ -8,9 +10,11 @@
 
 .userpage-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   padding: 2rem 1.5rem 1rem 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .userpage-greeting {
@@ -23,13 +27,10 @@
   color: #ffd600;
 }
 
-.userpage-logo {
+.userpage-photo {
   width: 56px;
   height: 56px;
-  border-radius: 50%;
-  background: #fff;
   object-fit: contain;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
 }
 
 .userpage-main {
@@ -38,6 +39,8 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .userpage-main h2 {
@@ -85,13 +88,35 @@
   font-size: 1.3rem;
 }
 
-/* Desktop styles */
-@media (min-width: 600px) {
-  .userpage-container {
-    align-items: center;
-  }
+/* Desktop styles: wider, more padding, centered content but full background */
+@media (min-width: 900px) {
   .userpage-header, .userpage-main {
-    max-width: 420px;
+    max-width: 700px;
     margin: 0 auto;
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .userpage-header {
+    padding-top: 3rem;
+    padding-bottom: 2rem;
+  }
+  .userpage-main {
+    padding-bottom: 3rem;
+  }
+  .userpage-photo {
+    width: 200px;
+    height: 200px;
+  }
+  .userpage-greeting {
+    font-size: 2rem;
+  }
+  .userpage-main h2 {
+    font-size: 1.5rem;
+  }
+  .userpage-playlist-item {
+    font-size: 1.2rem;
+    padding: 1.2rem 2rem;
   }
 }
