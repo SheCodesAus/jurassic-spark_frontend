@@ -1,0 +1,97 @@
+.userpage-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #7245F6 0%, #5A2FCF 30%, #4f8cff 60%, #2d3a8c 100%);
+  display: flex;
+  flex-direction: column;
+  font-family: 'Inter', Arial, sans-serif;
+}
+
+.userpage-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem 1.5rem 1rem 1.5rem;
+}
+
+.userpage-greeting {
+  font-size: 1.5rem;
+  color: #fff;
+  font-weight: 600;
+}
+
+.userpage-username {
+  color: #ffd600;
+}
+
+.userpage-logo {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #fff;
+  object-fit: contain;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+}
+
+.userpage-main {
+  flex: 1;
+  padding: 1rem 1.5rem 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.userpage-main h2 {
+  color: #fff;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.userpage-playlists {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.userpage-playlist-item {
+  background: #fff;
+  border-radius: 1rem;
+  margin-bottom: 1rem;
+  padding: 1rem 1.2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  font-size: 1.1rem;
+}
+
+.playlist-name {
+  font-weight: 600;
+  color: #333;
+}
+
+.playlist-vibe {
+  background: #ffd600;
+  color: #333;
+  border-radius: 0.7rem;
+  padding: 0.3rem 0.9rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.userpage-loading {
+  color: #fff;
+  text-align: center;
+  margin-top: 4rem;
+  font-size: 1.3rem;
+}
+
+/* Desktop styles */
+@media (min-width: 600px) {
+  .userpage-container {
+    align-items: center;
+  }
+  .userpage-header, .userpage-main {
+    max-width: 420px;
+    margin: 0 auto;
+  }
+}
