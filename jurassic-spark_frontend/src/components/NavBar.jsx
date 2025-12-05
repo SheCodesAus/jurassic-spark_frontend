@@ -5,12 +5,14 @@ import './NavBar.css';
 import Logo from '../assets/VibeLab_mobile.png';
 import NoteIcon from '../assets/Note.png';
 import useAuth from '../hooks/useAuth';
+import UserIcon from '../assets/listening.png';
 
 const NavBar = () => {
 
   const { auth, setAuth } = useAuth();
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   const handleLogout = () => {
     // clear tokens from local storage
@@ -47,16 +49,35 @@ const NavBar = () => {
         <li><Link to="/spotify">Create a playlist </Link></li>
         <li><Link to="/my-playlists">My Playlists</Link></li>
 
-        {auth.access_token && auth.refresh_token ? (
-          <li>
-            <Link to="/" onClick={handleLogout}>Logout</Link>
-          </li>
-        ) : (
-          <>
-            <li><Link to="/login">Login</Link></li>
-            <li><Link to="/signup">Sign Up</Link></li>
-          </>
-        )}
+      {auth.access_token && auth.refresh_token ? (
+        <li className="navbar-user-menu">
+          <button
+            className="user-icon-btn"
+            onClick={() => setUserMenuOpen(!userMenuOpen)}
+            aria-label="Open user menu"
+          >
+            <img src={UserIcon} alt="User" className="user-icon-img" />
+            <span className="user-name">{auth.username || "Account"}</span>
+          </button>
+          {userMenuOpen && (
+            <ul className="user-dropdown">
+              <li>
+                <Link to="/my-playlists" onClick={() => setUserMenuOpen(false)}>
+                  My Playlists
+                </Link>
+              </li>
+              <li>
+                <button onClick={handleLogout}>Logout</button>
+              </li>
+            </ul>
+          )}
+        </li>
+      ) : (
+        <>
+          <li><Link to="/login">Login</Link></li>
+          <li><Link to="/signup">Sign Up</Link></li>
+        </>
+      )}
 
       </ul>
     </nav>
