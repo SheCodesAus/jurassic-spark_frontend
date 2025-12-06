@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import './LoginForm.css';
 import vibelabLogo from '../assets/VibeLab.png';
-import { useNavigate } from "react-router";
+// import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
+
 
 const SignupForm = () => {
 
