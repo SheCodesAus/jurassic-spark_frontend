@@ -48,8 +48,8 @@ const LoginForm = () => {
 
         if (!formData.password.trim()) {
             newErrors.password = 'Password is required';
-        } else if (formData.password.length < 6) {
-            newErrors.password = 'Password must be at least 6 characters';
+        } else if (formData.password.length < 8) {
+            newErrors.password = 'Password must be at least 8 characters';
         }
 
         setErrors(newErrors);
@@ -107,6 +107,8 @@ const LoginForm = () => {
                 setErrors({ general: errorData.message || 'Login failed. Please try again.' });
             }
         } catch (error) {
+            console.log(error)
+
             setErrors({ general: 'Network error. Please check your connection.' });
         } finally {
             setIsLoading(false);
@@ -122,8 +124,8 @@ const LoginForm = () => {
         } else if (name === 'password') {
             if (!value.trim()) {
                 setErrors(prev => ({ ...prev, password: 'Password is required' }));
-            } else if (value.length < 6) {
-                setErrors(prev => ({ ...prev, password: 'Password must be at least 6 characters' }));
+            } else if (value.length < 8) {
+                setErrors(prev => ({ ...prev, password: 'Password must be at least 8 characters' }));
             }
         }
     };
@@ -202,7 +204,7 @@ const LoginForm = () => {
 
                 {/*Create Account */}
                 <div className="text-center">
-                    <a href="#" className="create-account-link">
+                    <a href="/signup" className="create-account-link">
                         Create Account
                     </a>
                 </div>
