@@ -103,12 +103,14 @@
 }
 
 .login-btn {
-    width: 100%;
+    width: auto;
+    min-width: 180px;
+    display: block;
+    margin: 0 auto 1rem auto; /* centers the button */
     font-size: 1.3rem;
     padding: 1.3rem 2rem;
     font-weight: 700;
     font-family: var(--font-heading);
-    margin-bottom: 1rem; 
     border-radius: 12px;
     background: linear-gradient(135deg, var(--color-cta-yellow) 0%, var(--color-cta-orange) 100%);
     border: none;

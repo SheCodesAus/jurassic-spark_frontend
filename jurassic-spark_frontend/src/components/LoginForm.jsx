@@ -5,8 +5,6 @@ import { useNavigate } from "react-router";
 import useAuth from '../hooks/useAuth';
 
 const LoginForm = () => {
-
-
     const { setAuth } = useAuth();
 
     const [formData, setFormData] = useState({
@@ -67,7 +65,6 @@ const LoginForm = () => {
         setIsLoading(true);
 
         try {
-            // Replace with your actual API endpoint
             const response = await fetch(`${apiUrl}/api/token/`, {
                 method: 'POST',
                 headers: {
@@ -78,17 +75,16 @@ const LoginForm = () => {
 
             if (response.ok) {
                 const data = await response.json();
-                // console.log('Login successful:', data);
 
                 // Store tokens in localStorage after successful login
                 localStorage.setItem('access_token', data.access);
                 localStorage.setItem('refresh_token', data.refresh);
 
-                //update auth context
+                // Update auth context
                 setAuth({ access_token: data.access, refresh_token: data.refresh });
 
                 // Redirect to home page 
-                navigate('/')
+                navigate('/');
 
             } else {
                 const errorData = await response.json();
@@ -96,7 +92,6 @@ const LoginForm = () => {
             }
         } catch (error) {
             console.log(error)
-
             setErrors({ general: 'Network error. Please check your connection.' });
         } finally {
             setIsLoading(false);
@@ -120,7 +115,6 @@ const LoginForm = () => {
 
     return (
         <div className="card login-card">
-
             <div className="logo-container">
                 <img
                     src={vibelabLogo}
