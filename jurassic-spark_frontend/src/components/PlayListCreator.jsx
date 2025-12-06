@@ -1,7 +1,6 @@
 // src/components/PlayListCreator.jsx
 import React, { useState } from "react";
-import { getAccessToken } from "../services/spotifyAuth";
-import { login } from "../services/spotifyAuth";
+import { getSpotifyClientCredentialAccessToken } from "../services/spotifyAuth";
 import { savePlaylistToBackend } from "../services/playlistService";
 import vibelabLogo from "../assets/VibeLab.png";
 import "./CreatePlaylistForm.css";
@@ -29,7 +28,6 @@ export default function PlaylistCreator() {
     const onPlaylistCreated = typeof window.onPlaylistCreated === 'function' ? window.onPlaylistCreated : () => {};
     const [isSavingToBackend, setIsSavingToBackend] = useState(false);
 
-    const token = getAccessToken();
 
     // --- Real Spotify search ---
     async function handleSearch(e) {
@@ -42,7 +40,7 @@ export default function PlaylistCreator() {
             setShowDropdown(false);
             return;
         }
-
+    const token = await getSpotifyClientCredentialAccessToken();
         try {
             const resp = await fetch(
                 `https://api.spotify.com/v1/search?q=${encodeURIComponent(
@@ -126,68 +124,14 @@ export default function PlaylistCreator() {
     // --- Create playlist & add tracks ---
     async function handleSubmit(e) {
         e.preventDefault();
-        if (!token) {
-        setStatus("Please log in with Spotify first.");
-        return;
-        }
+
         if (!playlistName.trim() || !vibe.trim() || selectedTracks.length === 0) {
         setStatus("Please provide name, vibe, and at least one track.");
         return;
         }
 
         try {
-        // Get user ID
-        const meResp = await fetch("https://api.spotify.com/v1/me", {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-        const meData = await meResp.json();
-        const userId = meData.id;
-        setUserId(userId);
-
-        // Create playlist
-        const playlistResp = await fetch(
-            `https://api.spotify.com/v1/users/${userId}/playlists`,
-            {
-            method: "POST",
-            headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                name: playlistName,
-                description:
-                playlistDesc?.trim()
-                    ? playlistDesc
-                    : `Vibe: ${vibe} • Created via Jurassic Spark`,
-                public: false,
-            }),
-            }
-        );
-        if (!playlistResp.ok) {
-            const text = await playlistResp.text();
-            throw new Error(`Create playlist failed: ${text}`);
-        }
-        const playlistData = await playlistResp.json();
-        const playlistId = playlistData.id;
-        setPlaylistId(playlistId);
-
-        // Add tracks
-        const addResp = await fetch(
-            `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
-            {
-            method: "POST",
-            headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ uris: selectedTracks }),
-            }
-        );
-        if (!addResp.ok) {
-            const text = await addResp.text();
-            throw new Error(`Add tracks failed: ${text}`);
-        }
-
+    
         // Save playlist to backend
         try {
             setIsSavingToBackend(true);
@@ -233,14 +177,6 @@ export default function PlaylistCreator() {
         <h2 className="text-center mb-2">Create your Playlist</h2>
         </div>
 
-        {/* ✅ Conditional rendering */}
-        {!token ? (
-        <>
-            <button onClick={login} className="btn btn-orange login-btn mb-3">
-            Login with Spotify
-            </button>
-        </>
-        ) : (
         <form onSubmit={handleSubmit} className="login-form">
             {/* ✅ Your existing form fields stay here */}
                 {/* Owner Name input box */}
@@ -357,7 +293,7 @@ export default function PlaylistCreator() {
             </button>
             </div>
         </form>
-        )}
+        
 
         {/* ✅ Status and summary stay outside */}
         {status && (

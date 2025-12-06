@@ -1,40 +1,42 @@
+const SPOTIFY_CLIENT_CREDENTIAL_TOKEN_STORE_KEY = "spotify_client_access_token";
+const SPOTIFY_CLIENT_CREDENTIAL_TOKEN_EXPIRY_KEY = "spotify_client_access_token_expiry";
+
 /**
  * Get a Spotify access token using Client Credentials flow (not tied to a user)
  * Stores/retrieves token from localStorage
  */
 export async function getSpotifyClientCredentialAccessToken() {
-    const TOKEN_STORE_KEY = "spotify_client_access_token";
-    const TOKEN_EXPIRY_KEY = "spotify_client_access_token_expiry";
+    const token = localStorage.getItem(SPOTIFY_CLIENT_CREDENTIAL_TOKEN_STORE_KEY);
+    const expiry = Number(localStorage.getItem(SPOTIFY_CLIENT_CREDENTIAL_TOKEN_EXPIRY_KEY) || 0);
+    if (!token || !expiry || Date.now() > expiry) {
+        try {
+            const response = await fetch('https://accounts.spotify.com/api/token', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Authorization': 'Basic ' + btoa(CLIENT_ID + ':' + CLIENT_SECRET)
+                },
+                body: 'grant_type=client_credentials'
+            });
 
-    // Check if token exists and is valid
-    const token = localStorage.getItem(TOKEN_STORE_KEY);
-    const expiry = localStorage.getItem(TOKEN_EXPIRY_KEY);
-    if (token && expiry && Date.now() < Number(expiry)) {
-        return token;
-    }
+            if (!response.ok) {
+                throw new Error('Failed to get access token');
+            }
 
-    // Request new token
-    const body = new URLSearchParams({
-        grant_type: "client_credentials",
-        client_id: CLIENT_ID,
-        client_secret: CLIENT_SECRET,
-    });
-    const resp = await fetch(TOKEN_URL, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body,
-    });
-    if (!resp.ok) {
-        throw new Error("Failed to get client credentials token");
-    }
-    const data = await resp.json();
-    const accessToken = data.access_token;
-    const expiresIn = data.expires_in; // seconds
-    localStorage.setItem(TOKEN_STORE_KEY, accessToken);
-    localStorage.setItem(TOKEN_EXPIRY_KEY, String(Date.now() + expiresIn * 1000));
-    return accessToken;
+            const data = await response.json();
+            const newToken = data.access_token;
+            // Set expiration time (minus 60 seconds for buffer)
+            const tokenExpirationTime = Date.now() + (data.expires_in - 60) * 1000;
+            localStorage.setItem(SPOTIFY_CLIENT_CREDENTIAL_TOKEN_STORE_KEY, newToken);
+            localStorage.setItem(SPOTIFY_CLIENT_CREDENTIAL_TOKEN_EXPIRY_KEY, String(tokenExpirationTime));
+
+            return newToken;
+        } catch (error) {
+            console.error('Error getting access token:', error);
+            throw error;
+        }
+    };
+    return token;
 }
 // src/services/spotifyAuth.js
 
