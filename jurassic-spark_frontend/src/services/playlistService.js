@@ -3,13 +3,19 @@
 
 export async function savePlaylistToBackend({ name, description, vibe, is_open = false, tracks = [], accessToken }) {
   try {
-    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+    const backendUrl = import.meta.env.VITE_JURASSIC_SPARK_BACKEND_API_URL;
+    // Get JWT token from localStorage (update key if needed)
+    const jwtToken = localStorage.getItem('jwt_token');
+    const authHeaders = jwtToken
+      ? { 'Authorization': `Bearer ${jwtToken}` }
+      : {};
+
     // 1. Create the playlist
     const playlistRes = await fetch(`${backendUrl}/api/playlists/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(accessToken ? { 'Authorization': `Bearer ${accessToken}` } : {})
+        ...authHeaders
       },
       body: JSON.stringify({ name, description, vibe, is_open })
     });
@@ -23,7 +29,7 @@ export async function savePlaylistToBackend({ name, description, vibe, is_open =
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(accessToken ? { 'Authorization': `Bearer ${accessToken}` } : {})
+          ...authHeaders
         },
         body: JSON.stringify({
           playlist_id: playlist.id,
@@ -47,7 +53,7 @@ export async function savePlaylistToBackend({ name, description, vibe, is_open =
 
 export async function getUserPlaylists(userId) {
   try {
-    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+    const backendUrl = import.meta.env.VITE_JURASSIC_SPARK_BACKEND_API_URL || 'http://localhost:5000';
     
     const response = await fetch(`${backendUrl}/api/playlists/${userId}`);
 
@@ -64,7 +70,7 @@ export async function getUserPlaylists(userId) {
 
 export async function deletePlaylistFromBackend(playlistId) {
   try {
-    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+    const backendUrl = import.meta.env.VITE_JURASSIC_SPARK_BACKEND_API_URL || 'http://localhost:5000';
     
     const response = await fetch(`${backendUrl}/api/playlists/${playlistId}`, {
       method: 'DELETE',
@@ -84,7 +90,7 @@ export async function deletePlaylistFromBackend(playlistId) {
 
 export async function updatePlaylistOnBackend(playlistId, updates) {
   try {
-    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+    const backendUrl = import.meta.env.VITE_JURASSIC_SPARK_BACKEND_API_URL || 'http://localhost:5000';
     
     const response = await fetch(`${backendUrl}/api/playlists/${playlistId}`, {
       method: 'PUT',

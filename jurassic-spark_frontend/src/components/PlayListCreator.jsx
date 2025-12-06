@@ -6,9 +6,10 @@ import { savePlaylistToBackend } from "../services/playlistService";
 import vibelabLogo from "../assets/VibeLab.png";
 import "./CreatePlaylistForm.css";
 
-const vibes = ["Country", "Latin", "Pop", "R&B", "Rock", "Techno"];
+const vibes = ["Pop", "Rock", "Latin", "Country", "Techno", "RNBSoul"];
 
 export default function PlaylistCreator() {
+    const [ownerName, setOwnerName] = useState("");
     const [playlistName, setPlaylistName] = useState("");
     const [playlistDesc, setPlaylistDesc] = useState("");
     const [vibe, setVibe] = useState("");
@@ -22,6 +23,10 @@ export default function PlaylistCreator() {
     const [status, setStatus] = useState("");
     const [playlistId, setPlaylistId] = useState(null);
     const [userId, setUserId] = useState(null);
+    // Add callback prop for refreshing playlists
+    // Usage: <PlaylistCreator onPlaylistCreated={refreshPlaylists} />
+    // If not provided, fallback to noop
+    const onPlaylistCreated = typeof window.onPlaylistCreated === 'function' ? window.onPlaylistCreated : () => {};
     const [isSavingToBackend, setIsSavingToBackend] = useState(false);
 
     const token = getAccessToken();
@@ -183,8 +188,36 @@ export default function PlaylistCreator() {
             throw new Error(`Add tracks failed: ${text}`);
         }
 
+        // Save playlist to backend
+        try {
+            setIsSavingToBackend(true);
+            // Prepare playlist data for backend (match backend expectations)
+            const playlistData = {
+                name: playlistName,
+                description: playlistDesc?.trim() ? playlistDesc : `Vibe: ${vibe}`,
+                vibe,
+                is_open: false,
+                tracks: selectedTracks.map(uri => {
+                    const track = searchResults.find(t => t.uri === uri);
+                    return {
+                        spotify_id: track?.id || uri,
+                        name: track?.name || '',
+                        artist: track?.artists ? track.artists.map(a => a.name).join(', ') : '',
+                        album: track?.album?.name || ''
+                    };
+                })
+            };
+            await savePlaylistToBackend(playlistData);
+            setStatus(`✅ Playlist "${playlistName}" saved to your account with ${selectedTracks.length} tracks!`);
+        } catch (err) {
+            console.error(err);
+            setStatus("⚠️ Failed to save to backend. You can still play the playlist!");
+        } finally {
+            setIsSavingToBackend(false);
+        }
         setSubmitted(true);
-        setStatus(`Playlist "${playlistName}" created with ${selectedTracks.length} tracks!`);
+        // Notify parent to refresh playlists
+        onPlaylistCreated();
         } catch (err) {
         console.error(err);
         setStatus("Failed to create playlist. Check scopes and login.");
@@ -210,6 +243,18 @@ export default function PlaylistCreator() {
         ) : (
         <form onSubmit={handleSubmit} className="login-form">
             {/* ✅ Your existing form fields stay here */}
+                {/* Owner Name input box */}
+    <div className="form-group">
+        <label htmlFor="ownerName">Owner Name</label>
+        <input
+            type="text"
+            id="ownerName"
+            value={ownerName}
+            onChange={(e) => setOwnerName(e.target.value)}
+            placeholder="Enter your name..."
+            required
+        />
+    </div>
             <div className="form-group">
             <label htmlFor="playlistName">Playlist Name</label>
             <input
@@ -322,68 +367,56 @@ export default function PlaylistCreator() {
         )}
 
         {submitted && (
-        <div
-            className="playlist-summary"
-            style={{
-            marginTop: "2rem",
-            background: "#f9f9f9",
-            padding: "1.5rem",
-            borderRadius: "0.5rem",
-            }}
-        >
-            <h2>✅ Playlist Created!</h2>
-            <p>
-            <strong>Name:</strong> {playlistName}
-            </p>
-            <p>
-            <strong>Description:</strong> {playlistDesc || `Vibe: ${vibe}`}
-            </p>
-            <p>
-            <strong>Vibe:</strong> {vibe}
-            </p>
-            <p>
-            <strong>Tracks Added:</strong> {selectedTracks.length}
-            </p>
-            
-            {selectedTracks.length > 0 && (
-            <div style={{ marginTop: "1rem" }}>
-                <h4>Tracks in Playlist:</h4>
-                <ul style={{ listStyle: "none", padding: 0 }}>
-                {selectedTracks.map((uri, idx) => {
-                    const track = searchResults.find((t) => t.uri === uri);
-                    return (
-                    <li key={uri} style={{ padding: "0.5rem 0", borderBottom: "1px solid #ddd" }}>
-                        <strong>{idx + 1}.</strong> {track ? `${track.name}` : "Unknown Track"}
-                        <br />
-                        <small style={{ color: "#666" }}>
-                        {track ? `${track.artists.map((a) => a.name).join(", ")}` : "Unknown Artist"}
-                        </small>
-                    </li>
-                    );
-                })}
-                </ul>
+            <div
+                className="playlist-summary"
+                style={{
+                    marginTop: "2rem",
+                    background: "#f9f9f9",
+                    padding: "1.5rem",
+                    borderRadius: "0.5rem",
+                }}
+            >
+                <h2>✅ Playlist Saved!</h2>
+                <p>
+                    <strong>Name:</strong> {playlistName}
+                </p>
+                <p>
+                    <strong>Description:</strong> {playlistDesc || `Vibe: ${vibe}`}
+                </p>
+                <p>
+                    <strong>Vibe:</strong> {vibe}
+                </p>
+                <p>
+                    <strong>Tracks Added:</strong> {selectedTracks.length}
+                </p>
+                {selectedTracks.length > 0 && (
+                    <div style={{ marginTop: "1rem" }}>
+                        <h4>Tracks in Playlist:</h4>
+                        <ul style={{ listStyle: "none", padding: 0 }}>
+                            {selectedTracks.map((uri, idx) => {
+                                const track = searchResults.find((t) => t.uri === uri);
+                                return (
+                                    <li key={uri} style={{ padding: "0.5rem 0", borderBottom: "1px solid #ddd" }}>
+                                        <strong>{idx + 1}.</strong> {track ? `${track.name}` : "Unknown Track"}
+                                        <br />
+                                        <small style={{ color: "#666" }}>
+                                            {track ? `${track.artists.map((a) => a.name).join(", ")}` : "Unknown Artist"}
+                                        </small>
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    </div>
+                )}
+                <button
+                    type="button"
+                    onClick={resetForm}
+                    className="btn btn-primary"
+                    style={{ marginTop: "1rem" }}
+                >
+                    Create Another Playlist
+                </button>
             </div>
-            )}
-
-            <button
-            type="button"
-            onClick={resetForm}
-            className="btn btn-primary"
-            style={{ marginTop: "1rem" }}
-            >
-            Create Another Playlist
-            </button>
-
-            <button
-            type="button"
-            onClick={handleSaveToBackend}
-            className="btn btn-orange"
-            style={{ marginTop: "1rem", marginLeft: "1rem" }}
-            disabled={isSavingToBackend}
-            >
-            {isSavingToBackend ? "Saving..." : "💾 Save Playlist"}
-            </button>
-        </div>
         )}
     </div>
     );

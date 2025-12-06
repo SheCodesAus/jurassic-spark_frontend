@@ -3,8 +3,7 @@ import { getAccessToken, login } from '../services/spotifyAuth';
 import SpotifyPlayer from '../components/SpotifyPlayer';
 import '../pages/LoginPage.css';
 
-// Dummy userId for demo; replace with real user auth
-const userId = 'demo-owner-id';
+// Remove top-level userId, get it inside useEffect
 
 const MyPlaylists = () => {
     const [playlists, setPlaylists] = useState([]);
@@ -14,29 +13,26 @@ const MyPlaylists = () => {
     const token = getAccessToken();
 
     useEffect(() => {
-        if (token) {
-            fetchPlaylists();
-        }
-    }, [token]);
-
-    async function fetchPlaylists() {
-        if (!token) {
-            setError("Please log in with Spotify first.");
+        const userId = localStorage.getItem('user_id');
+        console.log('[MyPlaylists] user_id from localStorage:', userId);
+        if (!userId || userId === 'undefined') {
+            setError('No user ID found. Please log in again.');
+            setPlaylists([]);
             return;
         }
+        fetchPlaylists(userId);
+    }, []);
 
+    async function fetchPlaylists(userId) {
         setLoading(true);
         try {
-            const resp = await fetch("https://api.spotify.com/v1/me/playlists?limit=50", {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-
+            const apiBaseUrl = import.meta.env.VITE_JURASSIC_SPARK_BACKEND_API_URL;
+            const resp = await fetch(`${apiBaseUrl}/api/playlists/user/${userId}/`);
             if (!resp.ok) {
                 throw new Error(`Failed to fetch playlists: ${resp.statusText}`);
             }
-
             const data = await resp.json();
-            setPlaylists(data.items || []);
+            setPlaylists(data || []);
             setError("");
         } catch (err) {
             console.error(err);
@@ -46,6 +42,9 @@ const MyPlaylists = () => {
             setLoading(false);
         }
     }
+
+    // Expose refresh function globally for PlaylistCreator
+    window.onPlaylistCreated = fetchPlaylists;
     // Real Spotify search state for the card
     const [searchTerm, setSearchTerm] = useState("");
     const [searchResults, setSearchResults] = useState([]);
@@ -108,87 +107,12 @@ const MyPlaylists = () => {
     }
 
     // Helper: Save playlist to Spotify and open it
-    async function handleSaveToSpotify(playlist) {
-        try {
-            // You need to implement the actual upload logic here
-            // For demo, just open the playlist in Spotify
-            if (playlist.external_urls && playlist.external_urls.spotify) {
-                window.open(playlist.external_urls.spotify, '_blank');
-            } else {
-                alert('No Spotify URL found for this playlist.');
-            }
-        } catch (err) {
-            alert('Failed to save playlist to Spotify.');
-        }
-    }
-
-    // Add a mock playlist for testing
-    const mockPlaylist = {
-        id: 'mock123',
-        name: 'Test Playlist',
-        description: 'A playlist for testing the Save to Spotify button.',
-        images: [{ url: '/src/assets/VibeLab.png' }],
-        vibe: 'Pop',
-        tracks: {
-            items: [
-                { track: { id: '1', name: 'Test Song', artists: [{ name: 'Test Artist' }] } }
-            ]
-        },
-        owner: { id: userId },
-        external_urls: { spotify: 'https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M' }
-    };
-
-    return (
-        <div className="login-page">
-            <main className="login-main">
-                <div className="login-container">
-                    <h2 className="login-header logo-text">My Playlists</h2>
-                    {/* Mock playlist card for testing */}
-                    <div key={mockPlaylist.id} style={{
-                        border: "2px solid #5A2FCF",
-                        borderRadius: "1rem",
-                        background: "#fff",
-                        boxShadow: "0 4px 16px rgba(90,47,207,0.08)",
-                        padding: "2rem",
-                        marginBottom: "2rem",
-                        maxWidth: "420px",
-                        margin: "0 auto 2rem auto"
-                    }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-                            <img src={mockPlaylist.images?.[0]?.url} alt="Playlist" style={{ width: "60px", height: "60px", borderRadius: "50%" }} />
-                            <div>
-                                <h3 style={{ margin: 0, fontSize: "1.5rem", color: "#5A2FCF" }}>{mockPlaylist.name}</h3>
-                                <p style={{ margin: 0, color: "#888" }}>Vibe: {mockPlaylist.vibe}</p>
-                            </div>
-                        </div>
-                        <p style={{ marginTop: "1rem", color: "#333" }}><strong>Description:</strong> {mockPlaylist.description}</p>
-                        <div style={{ marginTop: "1rem" }}>
-                            <strong>Songs:</strong>
-                            <ul style={{ paddingLeft: "1.2rem", margin: "0.5rem 0" }}>
-                                {mockPlaylist.tracks.items.map((item, idx) => (
-                                    <li key={item.track.id || idx}>
-                                        {item.track.name} - {item.track.artists.map(a => a.name).join(', ')}
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                        <div style={{ marginTop: "1rem", display: "flex", gap: "1rem" }}>
-                            <button
-                                className="btn btn-orange"
-                                style={{ padding: "0.5rem 1rem" }}
-                                onClick={() => {
-                                    if (!token) {
-                                        login();
-                                    } else {
-                                        handleSaveToSpotify(mockPlaylist);
-                                    }
-                                }}
-                            >
-                                Save to Spotify
-                            </button>
-                        </div>
-                    </div>
+    // ...existing code...
                     {/* Render all playlists */}
+                    {/* Show message if no playlists and not loading/error */}
+                    {!loading && !error && playlists.length === 0 && (
+                        <p>No playlists found. Try creating one!</p>
+                    )}
                     {playlists.map((playlist) => (
                         <div key={playlist.id} style={{
                             border: "2px solid #5A2FCF",
@@ -219,7 +143,8 @@ const MyPlaylists = () => {
                                 </ul>
                             </div>
                             {/* Save to Spotify button, only for owner */}
-                            {playlist.owner?.id === userId && (
+                            {/* Only show button if playlist.owner?.id matches localStorage user_id */}
+                            {playlist.owner?.id === localStorage.getItem('user_id') && (
                                 <div style={{ marginTop: "1rem", display: "flex", gap: "1rem" }}>
                                     <button
                                         className="btn btn-orange"
@@ -232,11 +157,7 @@ const MyPlaylists = () => {
                             )}
                         </div>
                     ))}
-                    {/* ...existing code for playlists rendering... */}
-                </div>
-            </main>
-        </div>
-    );
+
 };
 
 export default MyPlaylists;

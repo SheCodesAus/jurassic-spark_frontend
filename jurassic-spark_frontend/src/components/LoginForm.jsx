@@ -77,18 +77,30 @@ const LoginForm = () => {
             });
 
             if (response.ok) {
-                const data = await response.json();
-                console.log('Login successful:', data);
+                                const data = await response.json();
+                                console.log('Login successful:', data);
 
-                // Store tokens in localStorage after successful login
-                localStorage.setItem('access_token', data.access);
-                localStorage.setItem('refresh_token', data.refresh);
+                                // Store JWT and user ID in localStorage after successful login
+                                localStorage.setItem('jwt_token', data.token || data.access); // Use the correct key from backend
+                                // Store only numeric user_id from backend
+                                if (typeof data.user_id === 'number' && !isNaN(data.user_id)) {
+                                    localStorage.setItem('user_id', data.user_id);
+                                    console.log('Saved user_id to localStorage:', data.user_id);
+                                } else {
+                                    localStorage.removeItem('user_id');
+                                    console.warn('No valid numeric user_id found in login response:', data.user_id);
+                                }
 
-                //update auth context
-                setAuth({ access_token: data.access, refresh_token: data.refresh });
+                                // Optionally store refresh token if needed
+                                if (data.refresh) {
+                                    localStorage.setItem('refresh_token', data.refresh);
+                                }
 
-                // Redirect to home page 
-                navigate('/')
+                                //update auth context
+                                setAuth({ access_token: data.token || data.access, refresh_token: data.refresh });
+
+                                // Redirect to home page 
+                                navigate('/')
 
             } else {
                 const errorData = await response.json();
