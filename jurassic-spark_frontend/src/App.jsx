@@ -25,6 +25,7 @@ function App() {
         <Route path="/playlists" element={<CreatePlaylistPage />} />
         <Route path="/my-playlists" element={<MyPlaylists />} />
         <Route path="/user" element={<UserPage />} />
+        
 
         {/* ✅ New routes for Spotify testing */}
         <Route

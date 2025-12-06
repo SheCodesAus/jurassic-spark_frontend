@@ -13,6 +13,7 @@ const CreatePlaylistForm = () => {
   const [vibe, setVibe] = React.useState("");
   const [selectedSong, setSelectedSong] = React.useState(null);
   const [submitted, setSubmitted] = React.useState(false);
+  const [accessCode, setAccessCode] = React.useState("");
 
   // Search state
   const [searchTerm, setSearchTerm] = React.useState("");
@@ -119,6 +120,18 @@ const CreatePlaylistForm = () => {
             rows={2}
           />
         </div>
+        <div className="form-group">
+          <label htmlFor="playlistPassword">Playlist Password</label>
+          <input
+            type="password"
+            id="accessCode"
+            value={accessCode}
+            onChange={(e) => setAccessCode(e.target.value)}
+            placeholder="Create a playlist access code"
+            required
+          />
+
+        </div>
         <div className="form-group select-vibe-group">
           <label htmlFor="vibe">Select the Vibe</label>
           <div className="custom-dropdown">
@@ -201,7 +214,8 @@ const CreatePlaylistForm = () => {
             disabled={
               !playlistName.trim() ||
               !vibe.trim() ||
-              !selectedSong
+              !selectedSong ||
+              !accessCode.trim()
             }
           >
             All Done!
@@ -210,7 +224,7 @@ const CreatePlaylistForm = () => {
       </form>
       <Link to="/" className="back-home-link">Back to the Home</Link>
       {submitted && (
-        <div className="playlist-summary" style={{marginTop: "2rem", background: "#f9f9f9", padding: "1rem", borderRadius: "0.5rem"}}>
+        <div className="playlist-summary" style={{ marginTop: "2rem", background: "#f9f9f9", padding: "1rem", borderRadius: "0.5rem" }}>
           <h2>Playlist Summary</h2>
           <p><strong>Name:</strong> {playlistName}</p>
           <p><strong>Description:</strong> {playlistDesc}</p>
