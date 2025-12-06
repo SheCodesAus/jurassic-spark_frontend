@@ -1,31 +1,50 @@
 // Frontend service to handle playlist saving/fetching
 // This prepares data to send to backend when it's ready
 
-export async function savePlaylistToBackend(userId, playlistData) {
+export async function savePlaylistToBackend({ name, description, vibe, is_open = false, tracks = [], accessToken }) {
   try {
-    // TODO: Replace with your backend URL when ready
-    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
-    
-    const response = await fetch(`${backendUrl}/api/playlists`, {
+    const backendUrl = import.meta.env.VITE_JURASSIC_SPARK_BACKEND_API_URL;
+    // Get JWT token from localStorage (update key if needed)
+    const jwtToken = localStorage.getItem('jwt_token');
+    const authHeaders = jwtToken
+      ? { 'Authorization': `Bearer ${jwtToken}` }
+      : {};
+
+    // 1. Create the playlist
+    const playlistRes = await fetch(`${backendUrl}/api/playlists/`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        userId,
-        spotifyPlaylistId: playlistData.id,
-        name: playlistData.name,
-        description: playlistData.description,
-        imageUrl: playlistData.images?.[0]?.url || '',
-        trackCount: playlistData.tracks?.total || 0,
-        spotifyUri: playlistData.uri,
-        createdAt: new Date().toISOString()
-      })
+      headers: {
+        'Content-Type': 'application/json',
+        ...authHeaders
+      },
+      body: JSON.stringify({ name, description, vibe, is_open })
     });
-
-    if (!response.ok) {
-      throw new Error(`Failed to save playlist: ${response.statusText}`);
+    if (!playlistRes.ok) {
+      throw new Error(`Failed to create playlist: ${playlistRes.statusText}`);
     }
-
-    return await response.json();
+    const playlist = await playlistRes.json();
+    // 2. Add each track to the playlist
+    for (const track of tracks) {
+      const songRes = await fetch(`${backendUrl}/api/playlists/playlist-items/add/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...authHeaders
+        },
+        body: JSON.stringify({
+          playlist_id: playlist.id,
+          spotify_id: track.spotify_id || track.id,
+          title: track.name,
+          artist: track.artists ? track.artists.map(a => a.name).join(', ') : track.artist,
+          album: track.album ? (track.album.name || track.album) : ''
+        })
+      });
+      if (!songRes.ok) {
+        // Optionally handle song add errors individually
+        console.error(`Failed to add song: ${track.name}`);
+      }
+    }
+    return playlist;
   } catch (err) {
     console.error('Error saving playlist:', err);
     throw err;
@@ -34,7 +53,7 @@ export async function savePlaylistToBackend(userId, playlistData) {
 
 export async function getUserPlaylists(userId) {
   try {
-    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+    const backendUrl = import.meta.env.VITE_JURASSIC_SPARK_BACKEND_API_URL || 'http://localhost:5000';
     
     const response = await fetch(`${backendUrl}/api/playlists/${userId}`);
 
@@ -51,7 +70,7 @@ export async function getUserPlaylists(userId) {
 
 export async function deletePlaylistFromBackend(playlistId) {
   try {
-    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+    const backendUrl = import.meta.env.VITE_JURASSIC_SPARK_BACKEND_API_URL || 'http://localhost:5000';
     
     const response = await fetch(`${backendUrl}/api/playlists/${playlistId}`, {
       method: 'DELETE',
@@ -71,7 +90,7 @@ export async function deletePlaylistFromBackend(playlistId) {
 
 export async function updatePlaylistOnBackend(playlistId, updates) {
   try {
-    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+    const backendUrl = import.meta.env.VITE_JURASSIC_SPARK_BACKEND_API_URL || 'http://localhost:5000';
     
     const response = await fetch(`${backendUrl}/api/playlists/${playlistId}`, {
       method: 'PUT',

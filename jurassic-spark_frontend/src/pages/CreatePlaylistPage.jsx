@@ -1,7 +1,7 @@
 import React from 'react';
 
 
-import CreatePlaylistForm from '../components/CreatePlaylistForm';
+import PlayListCreator from '../components/PlayListCreator';
 import './LoginPage.css'; // Reuse login page styles
 
 const CreatePlaylistPage = () => {
@@ -10,7 +10,7 @@ const CreatePlaylistPage = () => {
             <main className="login-main">
                 <div className="login-container">
                     <h2 className="login-header logo-text">Create a Playlist</h2>
-                    <CreatePlaylistForm />
+                    <PlayListCreator />
                 </div>
             </main>
             <footer className="login-footer">
