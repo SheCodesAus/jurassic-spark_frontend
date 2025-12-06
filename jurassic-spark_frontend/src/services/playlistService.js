@@ -4,6 +4,9 @@
 export async function savePlaylistToBackend({ name, description, vibe, is_open = false, tracks = [], accessToken }) {
   try {
     const backendUrl = import.meta.env.VITE_JURASSIC_SPARK_BACKEND_API_URL;
+    if (!backendUrl) {
+      throw new Error("Backend URL is not defined. Check VITE_JURASSIC_SPARK_BACKEND_API_URL in .env.");
+    }
     // Get JWT token from localStorage (update key if needed)
     const jwtToken = localStorage.getItem('jwt_token');
     const authHeaders = jwtToken
@@ -20,7 +23,9 @@ export async function savePlaylistToBackend({ name, description, vibe, is_open =
       body: JSON.stringify({ name, description, vibe, is_open })
     });
     if (!playlistRes.ok) {
-      throw new Error(`Failed to create playlist: ${playlistRes.statusText}`);
+      const text = await playlistRes.text();
+      console.error("Failed to create playlist:", playlistRes.status, text);
+      throw new Error(`Failed to create playlist: ${playlistRes.status}`);
     }
     const playlist = await playlistRes.json();
     // 2. Add each track to the playlist
@@ -35,13 +40,15 @@ export async function savePlaylistToBackend({ name, description, vibe, is_open =
           playlist_id: playlist.id,
           spotify_id: track.spotify_id || track.id,
           title: track.name,
-          artist: track.artists ? track.artists.map(a => a.name).join(', ') : track.artist,
-          album: track.album ? (track.album.name || track.album) : ''
+          artist: track.artist,
+          album: track.album || "",
         })
       });
       if (!songRes.ok) {
         // Optionally handle song add errors individually
-        console.error(`Failed to add song: ${track.name}`);
+        const text = await songRes.text();
+        console.error(`Failed to add song: ${track.name}`, songRes.status, text);
+      
       }
     }
     return playlist;
