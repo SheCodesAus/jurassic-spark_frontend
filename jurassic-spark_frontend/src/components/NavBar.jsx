@@ -28,10 +28,10 @@ const NavBar = () => {
     <nav className="navbar">
       {/* Logo and Title together */}
       <div className="navbar-brand">
-        <Link to="/">
+        <Link to="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
           <img src={Logo} alt="VibeLab Logo" className="logo-img" />
+          <span className="navbar-title">VibeLab</span>
         </Link>
-        <span className="navbar-title">VibeLab</span>
       </div>
 
       {/* Hamburger for mobile */}
