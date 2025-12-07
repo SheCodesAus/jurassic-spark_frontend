@@ -26,12 +26,10 @@
 }
 
 .logo-bg {
-    position: absolute;
+    position: relative;
     top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: min(490px, 90vw);
-    height: min(490px, 90vw);
+    width: min(75vw, 600px);   /* scales with screen, max 600px */
+    height: min(75vw, 600px);  /* keep it a circle */
     background: white;
     border-radius: 50%;
     z-index: 0;
@@ -50,8 +48,8 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 180px;
-    height: 180px;
+    width: min(40vw, 280px);   /* scales with screen, max 280px */
+    height: min(40vw, 280px);
     border-radius: 50%;
     object-fit: cover;
     z-index: 2;
@@ -60,8 +58,8 @@
 /* Genre icons - evenly spaced using polar coordinates */
 .genre-icon {
     position: absolute;
-    width: 98px;
-    height: 98px;
+    width: min(20vw, 98px);    /* scales with screen, max 98px */
+    height: min(20vw, 98px);
     border-radius: 50%;
     object-fit: contain;
     box-sizing: border-box;
@@ -143,13 +141,23 @@
 /* Desktop adjustments */
 @media (min-width: 600px) {
     .logo-bg {
+        position: absolute;
+        top: 50%;
+        left: 50%;
         width: 600px;
         height: 600px;
+        transform: translate(-50%, -50%);
+        background: white;
+        border-radius: 50%;
+        z-index: 0;
+        box-shadow: 0 8px 40px rgba(0,0,0,0.08);
     }
+    
     .logo-circle {
         width: 490px;
         height: 490px;
         margin: 10rem auto 0rem auto;
+        position: relative;
     }
     
     .hero-logo {
