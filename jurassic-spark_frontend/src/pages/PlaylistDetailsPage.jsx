@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getSpotifyClientCredentialAccessToken } from "../services/spotifyAuth";
 import "./SharePage.css";
-
-
+import editIcon from "../assets/Edit.png";
+import saveIcon from "../assets/Save.png";
 
 
 export default function PlaylistDetailsPage() {
+
+  const jwtToken = localStorage.getItem("jwt_token");
   const { id } = useParams();
   const navigate = useNavigate();
   const apiBaseUrl = import.meta.env.VITE_JURASSIC_SPARK_BACKEND_API_URL;
@@ -14,19 +16,6 @@ export default function PlaylistDetailsPage() {
   const [playlist, setPlaylist] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-
-  // Edit mode
-  const [editMode, setEditMode] = useState(false);
-  const [editFields, setEditFields] = useState({
-    name: "",
-    description: "",
-    vibe: "",
-    is_open: true,
-  });
-  const [saving, setSaving] = useState(false);
-
-
 
   // Add-song state
   const [adding, setAdding] = useState(false);
@@ -40,6 +29,14 @@ export default function PlaylistDetailsPage() {
   const [searchStatus, setSearchStatus] = useState("");
   const [selectedSong, setSelectedSong] = useState(null);
 
+
+  // Name and description editing
+  const [editingField, setEditingField] = useState(null); // "name" | "description" | null
+  const [tempValue, setTempValue] = useState("");
+  const [savingField, setSavingField] = useState(false);
+
+
+
   //----------------------------------------------------------------
   // Load playlist using owner-only endpoint
   //----------------------------------------------------------------
@@ -49,7 +46,7 @@ export default function PlaylistDetailsPage() {
       setError(null);
 
       try {
-        const jwtToken = localStorage.getItem("jwt_token");
+
         if (!jwtToken) {
           throw new Error("You must be logged in to view this playlist.");
         }
@@ -67,16 +64,6 @@ export default function PlaylistDetailsPage() {
 
         const data = await resp.json();
         setPlaylist(data);
-
-
-        // init edit fields
-        setEditFields({
-          name: data.name,
-          description: data.description,
-          vibe: data.vibe,
-          is_open: data.is_open,
-        });
-
       } catch (err) {
         console.error("Error loading playlist:", err);
         setError(err.message);
@@ -86,61 +73,13 @@ export default function PlaylistDetailsPage() {
     }
 
     loadPlaylist();
-  }, [id, apiBaseUrl]);
-
-
-
-  //----------------------------------------------------------------
-  // Handle edit field changes
-  //----------------------------------------------------------------
-  function handleChange(e) {
-    const { name, value, type, checked } = e.target;
-    setEditFields((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  }
-
-
-
-  // Save Playlist Updates (PUT)
-  //----------------------------------------------------------------
-  async function handleSaveEdit() {
-    setSaving(true);
-    setError("");
-
-    try {
-      const jwtToken = localStorage.getItem("jwt_token");
-
-      const resp = await fetch(`${apiBaseUrl}/api/playlists/${id}/`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${jwtToken}`,
-        },
-        body: JSON.stringify(editFields),
-      });
-
-      if (!resp.ok) throw new Error(await resp.text());
-
-      const updated = await resp.json();
-
-      setPlaylist(updated);
-      setEditMode(false);
-
-    } catch (err) {
-      setError("Failed to update playlist: " + err.message);
-    } finally {
-      setSaving(false);
-    }
-  }
-
+  }, [id, apiBaseUrl, jwtToken]);
 
   //----------------------------------------------------------------
   // Delete Song
   //----------------------------------------------------------------
   async function deleteSong(itemId) {
-    const jwtToken = localStorage.getItem("jwt_token");
+
     if (!jwtToken) return;
 
     try {
@@ -236,7 +175,7 @@ export default function PlaylistDetailsPage() {
       return;
     }
 
-    const jwtToken = localStorage.getItem("jwt_token");
+
     if (!jwtToken) {
       setAddError("You must be logged in.");
       return;
@@ -293,7 +232,7 @@ export default function PlaylistDetailsPage() {
   }
 
   async function deletePlaylist() {
-    const jwtToken = localStorage.getItem("jwt_token");
+
 
     try {
       const resp = await fetch(`${apiBaseUrl}/api/playlists/${id}/`, {
@@ -318,6 +257,44 @@ export default function PlaylistDetailsPage() {
   }
 
 
+  async function saveField(fieldName) {
+
+    if (!jwtToken) return alert("Not logged in");
+
+    setSavingField(true);
+
+    try {
+      const resp = await fetch(`${apiBaseUrl}/api/playlists/${id}/`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwtToken}`,
+        },
+        body: JSON.stringify({
+          [fieldName]: tempValue,
+        }),
+      });
+
+      if (!resp.ok) {
+        const text = await resp.text();
+        throw new Error(text || "Failed to update playlist");
+      }
+
+      const data = await resp.json();
+
+      // update UI
+      setPlaylist(data);
+      setEditingField(null);
+
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setSavingField(false);
+    }
+  }
+
+
+
 
   //----------------------------------------------------------------
   // Rendering
@@ -329,21 +306,111 @@ export default function PlaylistDetailsPage() {
 
   return (
     <div style={{ maxWidth: 900, margin: "2rem auto", padding: "1rem" }}>
-      <h1>{playlist.name}</h1>
-
-
+      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+        {editingField === "name" ? (
+          <>
+            <input
+              value={tempValue}
+              onChange={(e) => setTempValue(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") saveField("name");
+              }}
+              autoFocus
+              style={{
+                fontSize: "1.8rem",
+                padding: "0.3rem",
+                width: "100%",
+                border: "1px solid #ccc",
+                borderRadius: "6px",
+              }}
+            />
+            <button
+              onClick={() => saveField("name")}
+              disabled={savingField}
+              style={{ fontSize: "0.9rem" }}
+            >
+              <img src={saveIcon} alt="Save" style={{ width: "16px", height: "16px" }} />
+            </button>
+          </>
+        ) : (
+          <>
+            <h1 style={{ marginBottom: 8 }}>{playlist.name}</h1>
+            <button
+              onClick={() => {
+                setEditingField("name");
+                setTempValue(playlist.name);
+              }}
+              style={{
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                fontSize: "1rem",
+              }}
+            >
+              <img src={editIcon} alt="Edit" style={{ width: "16px", height: "16px" }} />
+            </button>
+          </>
+        )}
+      </div>
 
       <p style={{ marginTop: 0, color: "#666" }}>
         Created by: {playlist.owner?.username || "Unknown"}
       </p>
 
+      {/* DESCRIPTION WITH EDIT ICON */}
       <div style={{ marginTop: "1.5rem" }}>
         <strong>Description:</strong>
-        <p>{playlist.description || "No description."}</p>
+
+        <div style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem" }}>
+          {editingField === "description" ? (
+            <>
+              <textarea
+                value={tempValue}
+                onChange={(e) => setTempValue(e.target.value)}
+                rows={3}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    saveField("description");
+                  }
+                }}
+                autoFocus
+                style={{
+                  width: "100%",
+                  padding: "0.5rem",
+                  border: "1px solid #ccc",
+                  borderRadius: "6px",
+                }}
+              />
+              <button
+                onClick={() => saveField("description")}
+                disabled={savingField}
+                style={{ fontSize: "0.9rem", marginTop: "0.5rem" }}
+              >
+                <img src={saveIcon} alt="Save" style={{ width: "16px", height: "16px" }} />
+              </button>
+            </>
+          ) : (
+            <>
+              <p >{playlist.description || "No description."}</p>
+              <button
+                onClick={() => {
+                  setEditingField("description");
+                  setTempValue(playlist.description || "");
+                }}
+                style={{
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  fontSize: "0.5rem",
+                }}
+              >
+                <img src={editIcon} alt="Edit" style={{ width: "16px", height: "16px" }} />
+              </button>
+            </>
+          )}
+        </div>
       </div>
-
-
-
 
 
       {/* SONG LIST */}
