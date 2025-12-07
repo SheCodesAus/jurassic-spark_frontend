@@ -30,7 +30,8 @@ const SignupForm = () => {
     const [checkingUsername, setCheckingUsername] = useState(false);
     const [usernameAvailable, setUsernameAvailable] = useState(null);
 
-    const apiUrl = import.meta.env.VITE_JURASSIC_SPARK_BACKEND_API_URL;
+    const apiUrl = import.meta.env.VITE_JURASSIC_SPARK_BACKEND_API_URL || 'http://localhost:8000';
+    console.log('signup apiUrl =', apiUrl);
 
     useEffect(() => {
         if (!formData.username.trim()) {
@@ -124,19 +125,51 @@ const SignupForm = () => {
         setIsLoading(true);
 
         try {
-            // Replace with your actual API endpoint
-            const response = await fetch('/api/register', {
+            // Minimal change: send fields expected by the backend (first_name, last_name, password2)
+            const payload = {
+                first_name: formData.name,
+                last_name: formData.last_name,
+                username: formData.username,
+                password: formData.password,
+                password2: formData.confirmPassword
+            };
+
+            // debug
+            console.log('POST', `${apiUrl}/api/users/register/`, payload);
+
+            const response = await fetch(`${apiUrl}/api/users/register/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name: formData.name,
-                    last_name: formData.last_name,
-                    username: formData.username,
-                    password: formData.password
-                })
+                body: JSON.stringify(payload)
             });
 
-            const data = await response.json();
+            // Read raw text first (safe for empty or non-JSON responses)
+            const raw = await response.text().catch(() => '');
+
+            // Log raw response so you can inspect the server message in the console
+            console.log('Signup raw response:', raw, 'status:', response.status);
+
+            // Try parse JSON only if there's content
+            let data = null;
+            if (raw) {
+                try { data = JSON.parse(raw); } catch (err) {
+                    console.warn('Signup response not JSON:', err);
+                }
+            }
+
+            // // Replace with your actual API endpoint
+            // const response = await fetch(`${apiUrl}/api/users/register/`, {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify({
+            //         name: formData.name,
+            //         last_name: formData.last_name,
+            //         username: formData.username,
+            //         password: formData.password
+            //     })
+            // });
+
+            // const data = await response.json().catch(() => null);
 
             if (response.ok) {
                 console.log("Registration success:", data);
