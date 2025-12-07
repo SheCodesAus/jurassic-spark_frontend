@@ -79,63 +79,74 @@
 .genre-icon-4 { top: 70%; left: 20%; transform: translate(-50%, -50%); }
 .genre-icon-5 { top: 35%; left: 17%; transform: translate(-50%, -50%); }
 
-.hero-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    align-items: center;
-    justify-content: center;
-    margin-top: 2rem; 
-    margin-bottom: 4rem;
-    width: 100%;
-    position: relative;
-    z-index: 10;
-}
-
-.hero-btn {
-    width: 100%;
-    max-width: 220px;
-    height: 60px;
-    font-size: 1rem;
-    padding: 1rem 0;
-    border-radius: 14px;
+.hero-actions .cta-yellow,
+.hero-actions .cta-orange {
+    width: 70vw;
+    max-width: 90vw;
+    min-width: 180px;
+    padding: 1.5rem 0.5rem;
+    border-radius: 18px;
     box-shadow: 0 8px 25px rgba(255, 221, 0, 0.12);
-    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
-    font-family: var(--font-body);
-    font-weight: 800;
-    border: none;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
-    color: #fff; 
-    text-shadow:
-        0 2px 8px rgba(0,0,0,0.7),
-        0 0px 2px rgba(0,0,0,0.35),
-        0 0 0.5px #333;
-}
-
-
-.btn-primary {
-    background: linear-gradient(135deg, #FFD600 0%, #FFB800 40%, #FFC300 70%, #B8860B 100%);
+    font-weight: 600;
+    display: flex;
     color: #fff !important;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.25);
-    border: none;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.35), 0 0px 2px rgba(0,0,0,0.18);
+    text-shadow: 0 2px 8px rgba(0,0,0,0.7), 0 0px 2px rgba(0,0,0,0.35);
+    text-decoration: none !important;
+    margin-bottom: 0.3rem;
+    margin-top: 0.7rem;
+    transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
 }
 
-.btn-orange {
-    background: linear-gradient(135deg, #FF6700 0%, #FFB800 100%);
-    text-shadow: 0 2px 8px rgba(0,0,0,0.35), 0 0px 2px rgba(0,0,0,0.18);
-}
-
-.hero-btn:hover {
-    transform: translateY(-2px) scale(1.03);
-    box-shadow: 0 12px 35px rgba(255, 221, 0, 0.18);
-    filter: brightness(1.08);
+.hero-actions .cta-yellow {
+    background: linear-gradient(135deg, #FFD600 0%, #FFB800 40%, #FFC300 70%, #B8860B 100%);
     color: #fff;
     text-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    border: none;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.35), 0 0px 2px rgba(0,0,0,0.18);
+}
+
+.hero-actions .cta-orange {
+    background: linear-gradient(135deg, #FF6700 0%, #FFB800 100%);
+    color: #fff;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+
+.hero-actions .cta-yellow:hover,
+.hero-actions .cta-yellow:focus {
+    background: linear-gradient(135deg, #FFB800 0%, #FFD600 100%) ;
+    box-shadow: 0 12px 35px rgba(255, 221, 0, 0.18);
+    filter: brightness(1.08);
+    text-decoration: none;
+    color: #fff;
+    border: none;
+}
+
+.hero-actions .cta-orange:hover,
+.hero-actions .cta-orange:focus {
+    background: linear-gradient(135deg, #FFB800 0%, #FF6700 100%) ;
+    box-shadow: 0 12px 35px rgba(255, 221, 0, 0.18);
+    filter: brightness(1.08);
+    text-decoration: none;
+    color: #fff ;
+}
+
+.hero-actions a,
+.hero-actions a:visited,
+.hero-actions a:hover,
+.hero-actions a:focus,
+.hero-actions .cta-yellow,
+.hero-actions .cta-orange,
+.hero-actions .cta-yellow:hover,
+.hero-actions .cta-orange:hover,
+.hero-actions .cta-yellow:focus,
+.hero-actions .cta-orange:focus {
+    text-decoration: none !important;
+    outline: none !important;
+    border: none !important;
 }
 
 /* Desktop adjustments */
@@ -176,19 +187,25 @@
         .genre-icon-4 { top: 70%; left: 13%; transform: translate(-50%, -50%); }
         .genre-icon-5 { top: 30%; left: 13%; transform: translate(-50%, -50%); }
 
-
     .hero-actions {
+        display: flex;
         flex-direction: row;
         gap: 2rem;
         margin-top: 7rem;
         margin-bottom: 4rem;
+        justify-content: center;
+        align-items: center;
     }
 
-    .hero-btn {
-        width: 180px;
-        height: 80px;
-        font-size: 1.1rem;
-        padding: 0.8rem 0.5rem;
-        max-width: none;
+    .hero-actions .cta-yellow,
+    .hero-actions .cta-orange {
+        width: 240px;
+        max-width: 240px;
+        min-width: 180px;
+        font-size: 1.3rem;
+        padding: 1.5rem 0.5rem;
+        border-radius: 18px;
+        margin-bottom: 1rem;
+        margin-top: 0;
     }
 }
