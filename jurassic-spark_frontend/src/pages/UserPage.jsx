@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import UserPhoto from "../assets/listening.png";
+import NoPlaylistGif from "../assets/rocker.gif";
+import Playlisticon from "../assets/listen.png";
 import "./UserPage.css";
 
 const API_URL = import.meta.env.VITE_JURASSIC_SPARK_BACKEND_API_URL;
@@ -63,29 +65,42 @@ export default function UserPage() {
           </div>
         </div>
       </header>      
-      <h2 className="userpage-title">Your Playlists</h2>
+
       <main className="userpage-main">
         <ul className="userpage-playlists">
-          {Array.isArray(playlists) && playlists.length > 0 ? (
-            playlists.map((playlist) => (
-              <li key={playlist.id} className="userpage-playlist-item">
-                <span className="playlist-name">{playlist.name}</span>
-                <span className="playlist-vibe">{playlist.vibe}</span>
-              </li>
-            ))
-          ) : (
-            <div className="no-playlists-container">
-              <p className="no-playlists-message">
-                No playlist found... <br />
-                <span>It’s time to start designing your own!</span>
-              </p>
-              <a href="/spotify" className="btn btn-primary hero-btn">
-                Create a Playlist
-              </a>
-            </div>
-          )}
-        </ul>
-      </main>
-    </div>
-  );
-}
+          <h2 className="userpage-title">
+            <span className="userpage-title-icon-circle">
+            <img src={Playlisticon} alt="Playlist icon" className="userpage-title-icon" />
+            </span>
+          Your Playlists
+          </h2>
+            {Array.isArray(playlists) && playlists.length > 0 ? (
+              playlists.map((playlist) => (
+                <li key={playlist.id} className="userpage-playlist-item">
+                  <span className="playlist-name">{playlist.name}</span>
+                  <span className="playlist-vibe">{playlist.vibe}</span>
+                </li>
+              ))
+            ) : (
+              <div className="no-playlists-container">
+                <p className="no-playlists-message">
+                  No playlist found... <br />
+                  <span>It’s time to start designing your own!</span>
+                </p>
+                <div className="no-playlists-icon-circle">
+                  <img
+                    src={NoPlaylistGif}
+                    alt="Animated playlist"
+                    className="no-playlists-icon"
+                  />
+                </div>
+                <a href="/spotify" className="btn btn-primary hero-btn">
+                  Create a Playlist
+                </a>
+              </div>
+            )}
+          </ul>
+        </main>
+      </div>
+    );
+  }

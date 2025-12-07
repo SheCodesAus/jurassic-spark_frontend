@@ -61,6 +61,30 @@
   font-weight: 600;
   letter-spacing: 1px;
   margin-bottom: 0.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+}
+
+.userpage-title-icon-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.2em;
+  height: 2.2em;
+  background: #fff;
+  border-radius: 50%;
+  border: 2px solid #eee;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.userpage-title-icon {
+  width: 1.5em;
+  height: 1.5em;
+  object-fit: contain;
+  display: block;
+  margin-right: -0.3em;
 }
 
 .userpage-playlists {
@@ -108,19 +132,39 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2rem 0;
+  padding: 1rem 0;
   background: rgba(255,255,255,0.05);
   border-radius: 1rem;
-  margin-top: 1.5rem;
 }
 
 .no-playlists-message {
   color: #fff;
   font-size: 1.1rem;
   text-align: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.7rem;
   font-weight: 500;
   line-height: 1.5;
+}
+
+.no-playlists-icon-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: min(28vw, 100px);
+  height: min(28vw, 100px);
+  background: #fff;
+  border-radius: 30%;
+  border: 2px solid #eee;
+  margin: 1.2rem auto 1.2rem auto;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.no-playlists-icon {
+  width: min(28vw, 100px);
+  height: min(28vw, 100px);
+  object-fit: cover;
+  border-radius: 30%;
+  display: block;
 }
 
 .hero-btn {
@@ -130,6 +174,7 @@
   height: auto;
   display: block;
   margin: 0 auto;
+  margin-top: 1rem;
   font-size: 1rem;
   padding: 0.5rem 1.1rem;
   font-weight: 600;
