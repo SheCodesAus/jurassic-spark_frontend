@@ -9,7 +9,7 @@ const SignupForm = () => {
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
-        first_name: '',
+        name: '',
         last_name: '',
         username: '',
         password: '',
@@ -87,7 +87,7 @@ const SignupForm = () => {
 
     const validateForm = () => {
         const newErrors = {};
-        if (!formData.first_name.trim()) newErrors.name = 'First name is required';
+        if (!formData.name.trim()) newErrors.name = 'First name is required';
         if (!formData.last_name.trim()) newErrors.last_name = 'Last name is required';
         if (!formData.username.trim()) {
             newErrors.username = 'Username is required';
@@ -125,15 +125,14 @@ const SignupForm = () => {
 
         try {
             // Replace with your actual API endpoint
-            const response = await fetch(`${apiUrl}/api/users/register/`, {
+            const response = await fetch('/api/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    first_name: formData.first_name,
+                    name: formData.name,
                     last_name: formData.last_name,
                     username: formData.username,
-                    password: formData.password,
-                    password2: formData.confirmPassword
+                    password: formData.password
                 })
             });
 
@@ -187,10 +186,10 @@ const SignupForm = () => {
                     <label htmlFor="name">First Name</label>
                     <input
                         type="text"
-                        id="first_name"
-                        name="first_name"
+                        id="name"
+                        name="name"
                         placeholder="Enter your first name"
-                        value={formData.first_name}
+                        value={formData.name}
                         onChange={handleChange}
                         className={errors.name ? 'error' : ''}
                         required

@@ -45,7 +45,7 @@ const LoginForm = () => {
             ...prev,
             [name]: value
         }));
-
+        
         // Clear error when user starts typing
         if (errors[name]) {
             setErrors(prev => ({
@@ -76,7 +76,7 @@ const LoginForm = () => {
     // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        
         if (!validateForm()) {
             return;
         }
@@ -134,7 +134,7 @@ const LoginForm = () => {
     // Handle input blur for real-time validation
     const handleBlur = (e) => {
         const { name, value } = e.target;
-
+        
         if (name === 'username' && !value.trim()) {
             setErrors(prev => ({ ...prev, username: 'Username is required' }));
         } else if (name === 'password') {
@@ -158,7 +158,7 @@ const LoginForm = () => {
             </div>
 
             <p className="text-center mb-3 subtitle">Ready to create the perfect vibe?</p>
-
+            
             <form onSubmit={handleSubmit} className="login-form">
                 {errors.general && (
                     <div className="error-message general-error mb-2">
@@ -169,10 +169,10 @@ const LoginForm = () => {
                 {/* Username Field */}
                 <div className="form-group">
                     <label htmlFor="username">Username</label>
-                    <input
-                        type="text"
-                        id="username"
-                        name="username"
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username" 
                         placeholder="Enter your username"
                         value={formData.username}
                         onChange={handleChange}
@@ -188,10 +188,10 @@ const LoginForm = () => {
                 {/* Password Field */}
                 <div className="form-group">
                     <label htmlFor="password">Password</label>
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
                         placeholder="Enter your password"
                         value={formData.password}
                         onChange={handleChange}
@@ -205,8 +205,8 @@ const LoginForm = () => {
                 </div>
 
                 {/* Login Button */}
-                <button
-                    type="submit"
+                <button 
+                    type="submit" 
                     className={`btn btn-primary login-btn mb-3 ${isLoading ? 'btn-loading' : ''}`}
                     disabled={isLoading}
                 >
