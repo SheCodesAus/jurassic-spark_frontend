@@ -3,7 +3,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import vibelabLogo from "../assets/VibeLab.png";
 import "./CreatePlaylistForm.css";
-import { getAccessToken } from "../services/spotifyAuth";
+import { getSpotifyClientCredentialAccessToken } from "../services/spotifyAuth";
 
 const vibes = ["Country", "Latin", "Pop", "R&B", "Rock", "Techno"];
 
@@ -13,6 +13,7 @@ const CreatePlaylistForm = () => {
   const [vibe, setVibe] = React.useState("");
   const [selectedSong, setSelectedSong] = React.useState(null);
   const [submitted, setSubmitted] = React.useState(false);
+  const [accessCode, setAccessCode] = React.useState("");
 
   // Search state
   const [searchTerm, setSearchTerm] = React.useState("");
@@ -20,18 +21,12 @@ const CreatePlaylistForm = () => {
   const [showDropdown, setShowDropdown] = React.useState(false);
   const [status, setStatus] = React.useState("");
 
-  const token = getAccessToken();
+  // Remove user token, use client credentials for search
 
   // Real Spotify search function
   const handleSearch = async (e) => {
     const value = e.target.value;
     setSearchTerm(value);
-
-    if (!token) {
-      setStatus("Please log in with Spotify first.");
-      setShowDropdown(false);
-      return;
-    }
 
     if (value.trim().length < 2) {
       setSearchResults([]);
@@ -40,6 +35,7 @@ const CreatePlaylistForm = () => {
     }
 
     try {
+      const token = await getSpotifyClientCredentialAccessToken();
       const resp = await fetch(
         `https://api.spotify.com/v1/search?q=${encodeURIComponent(value)}&type=track&limit=10`,
         {
@@ -58,10 +54,11 @@ const CreatePlaylistForm = () => {
         id: track.id,
         uri: track.uri,
         album: track.album?.name,
-        image: track.album?.images?.[2]?.url || track.album?.images?.[0]?.url || ""
+        image: track.album?.images?.[0]?.url || ""
       }));
       setSearchResults(results);
       setShowDropdown(true);
+      setStatus("");
     } catch (err) {
       setStatus("Error searching Spotify tracks.");
       setSearchResults([]);
@@ -93,6 +90,8 @@ const CreatePlaylistForm = () => {
     setSubmitted(false);
   };
 
+  // Custom dropdown state
+  const [showVibeDropdown, setShowVibeDropdown] = React.useState(false);
   return (
     <div className="card login-card">
       <div className="logo-container">
@@ -121,20 +120,58 @@ const CreatePlaylistForm = () => {
             rows={2}
           />
         </div>
+        <div className="form-group">
+          <label htmlFor="playlistPassword">Playlist Password</label>
+          <input
+            type="password"
+            id="accessCode"
+            value={accessCode}
+            onChange={(e) => setAccessCode(e.target.value)}
+            placeholder="Create a playlist access code"
+            required
+          />
+
+        </div>
         <div className="form-group select-vibe-group">
           <label htmlFor="vibe">Select the Vibe</label>
-          <select
-            id="vibe"
-            value={vibe}
-            onChange={(e) => setVibe(e.target.value)}
-            required
-          >
-            <option value="">Select Vibe</option>
-            {vibes.map((v) => (
-              <option key={v} value={v}>{v}</option>
-            ))}
-          </select>
-          <span className="custom-arrow"></span>
+          <div className="custom-dropdown">
+            <button
+              type="button"
+              className="dropdown-toggle"
+              onClick={() => setShowVibeDropdown((prev) => !prev)}
+              style={{
+                width: "100%",
+                padding: "0.7rem 0.8rem",
+                borderRadius: "1rem",
+                border: "1.5px solid #e3e3e3",
+                background: "#f7f7fa",
+                color: "#333",
+                fontWeight: 600,
+                fontSize: "1rem",
+                textAlign: "left",
+                cursor: "pointer"
+              }}
+            >
+              {vibe ? vibe : "Select Vibe"}
+              <span className="custom-arrow" style={{ float: "right" }}></span>
+            </button>
+            {showVibeDropdown && (
+              <ul className="dropdown-menu">
+                {vibes.map((v) => (
+                  <li
+                    key={v}
+                    className={`dropdown-item${vibe === v ? " selected" : ""}`}
+                    onClick={() => {
+                      setVibe(v);
+                      setShowVibeDropdown(false);
+                    }}
+                  >
+                    {v}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
         {/* Search bar for song */}
         <div className="form-group search-bar-group">
@@ -177,7 +214,8 @@ const CreatePlaylistForm = () => {
             disabled={
               !playlistName.trim() ||
               !vibe.trim() ||
-              !selectedSong
+              !selectedSong ||
+              !accessCode.trim()
             }
           >
             All Done!
@@ -186,7 +224,7 @@ const CreatePlaylistForm = () => {
       </form>
       <Link to="/" className="back-home-link">Back to the Home</Link>
       {submitted && (
-        <div className="playlist-summary" style={{marginTop: "2rem", background: "#f9f9f9", padding: "1rem", borderRadius: "0.5rem"}}>
+        <div className="playlist-summary" style={{ marginTop: "2rem", background: "#f9f9f9", padding: "1rem", borderRadius: "0.5rem" }}>
           <h2>Playlist Summary</h2>
           <p><strong>Name:</strong> {playlistName}</p>
           <p><strong>Description:</strong> {playlistDesc}</p>

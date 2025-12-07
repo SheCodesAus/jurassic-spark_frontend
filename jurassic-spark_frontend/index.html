@@ -10,6 +10,12 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      window.onSpotifyWebPlaybackSDKReady = function() {
+        // The Spotify Web Playback SDK is ready to use
+        // Initialization is handled in your React components
+      };
+    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

@@ -1,3 +1,43 @@
+const SPOTIFY_CLIENT_CREDENTIAL_TOKEN_STORE_KEY = "spotify_client_access_token";
+const SPOTIFY_CLIENT_CREDENTIAL_TOKEN_EXPIRY_KEY = "spotify_client_access_token_expiry";
+
+/**
+ * Get a Spotify access token using Client Credentials flow (not tied to a user)
+ * Stores/retrieves token from localStorage
+ */
+export async function getSpotifyClientCredentialAccessToken() {
+    const token = localStorage.getItem(SPOTIFY_CLIENT_CREDENTIAL_TOKEN_STORE_KEY);
+    const expiry = Number(localStorage.getItem(SPOTIFY_CLIENT_CREDENTIAL_TOKEN_EXPIRY_KEY) || 0);
+    if (!token || !expiry || Date.now() > expiry) {
+        try {
+            const response = await fetch('https://accounts.spotify.com/api/token', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Authorization': 'Basic ' + btoa(CLIENT_ID + ':' + CLIENT_SECRET)
+                },
+                body: 'grant_type=client_credentials'
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to get access token');
+            }
+
+            const data = await response.json();
+            const newToken = data.access_token;
+            // Set expiration time (minus 60 seconds for buffer)
+            const tokenExpirationTime = Date.now() + (data.expires_in - 60) * 1000;
+            localStorage.setItem(SPOTIFY_CLIENT_CREDENTIAL_TOKEN_STORE_KEY, newToken);
+            localStorage.setItem(SPOTIFY_CLIENT_CREDENTIAL_TOKEN_EXPIRY_KEY, String(tokenExpirationTime));
+
+            return newToken;
+        } catch (error) {
+            console.error('Error getting access token:', error);
+            throw error;
+        }
+    };
+    return token;
+}
 // src/services/spotifyAuth.js
 
 // Read values from Vite env (NOT process.env)
