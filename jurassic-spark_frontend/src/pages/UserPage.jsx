@@ -67,39 +67,41 @@ export default function UserPage() {
       </header>      
 
       <main className="userpage-main">
-        <ul className="userpage-playlists">
-          <h2 className="userpage-title">
+        <div className="no-playlists-container">
+          <div className="userpage-title-row">
             <span className="userpage-title-icon-circle">
-            <img src={Playlisticon} alt="Playlist icon" className="userpage-title-icon" />
+              <img src={Playlisticon} alt="Playlist icon" className="userpage-title-icon" />
             </span>
-          Your Playlists
-          </h2>
-            {Array.isArray(playlists) && playlists.length > 0 ? (
-              playlists.map((playlist) => (
+            <h2 className="userpage-title">Your Playlists</h2>
+          </div>
+          {Array.isArray(playlists) && playlists.length > 0 ? (
+            <ul className="userpage-playlists">
+              {playlists.map((playlist) => (
                 <li key={playlist.id} className="userpage-playlist-item">
                   <span className="playlist-name">{playlist.name}</span>
                   <span className="playlist-vibe">{playlist.vibe}</span>
                 </li>
-              ))
-            ) : (
-              <div className="no-playlists-container">
-                <p className="no-playlists-message">
-                  No playlist found... <br />
-                  <span>It’s time to start designing your own!</span>
-                </p>
-                <div className="no-playlists-icon-circle">
-                  <img
-                    src={NoPlaylistGif}
-                    alt="Animated playlist"
-                    className="no-playlists-icon"
-                  />
-                </div>
-                <a href="/spotify" className="btn btn-primary hero-btn">
-                  Create a Playlist
-                </a>
+              ))}
+            </ul>
+          ) : (
+            <>
+              <p className="no-playlists-message">
+                No playlist found... <br />
+                <span>It’s time to start designing your own!</span>
+              </p>
+              <div className="no-playlists-icon-circle">
+                <img
+                  src={NoPlaylistGif}
+                  alt="Animated playlist"
+                  className="no-playlists-icon"
+                />
               </div>
-            )}
-          </ul>
+              <a href="/spotify" className="btn btn-primary hero-btn">
+                Create a Playlist
+              </a>
+            </>
+          )}
+          </div>
         </main>
       </div>
     );
