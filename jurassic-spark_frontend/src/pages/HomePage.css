@@ -167,7 +167,7 @@
         .genre-icon-3 { top: 90%; left: 50%; transform: translate(-50%, -50%); }
         .genre-icon-4 { top: 70%; left: 13%; transform: translate(-50%, -50%); }
         .genre-icon-5 { top: 30%; left: 13%; transform: translate(-50%, -50%); }
-    }
+
 
     .hero-actions {
         flex-direction: row;
