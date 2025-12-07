@@ -12,7 +12,7 @@ import './Master.css';
 import PlayListCreator from './components/PlayListCreator';
 import UserPage from './pages/UserPage';
 import SharePage from './pages/SharePage';
-
+import PlaylistDetailsPage from './pages/PlaylistDetailsPage';
 
 
 function App() {
@@ -24,6 +24,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/playlists" element={<CreatePlaylistPage />} />
+        <Route path="/playlist/:id" element={<PlaylistDetailsPage />} />
         <Route path="/my-playlists" element={<MyPlaylists />} />
         <Route path="/user" element={<UserPage />} />
         <Route path="/share/:token" element={<SharePage />} />
