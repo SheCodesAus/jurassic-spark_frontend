@@ -1,0 +1,132 @@
+/* --- Shared Playlist Page (SharePage) --- */
+
+.share-songs-section h3,
+.share-add-section h3 {
+    font-family: var(--font-heading);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: 0.75rem;
+}
+
+/* Songs list card */
+.share-songs-list {
+    list-style: none;
+    margin: 0;
+    padding: 1rem 1.25rem;
+    border-radius: 16px;
+    background: var(--color-background-light);
+    border: 1px solid var(--color-border);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.share-songs-list li {
+    font-family: var(--font-body);
+    font-size: 0.98rem;
+    color: var(--color-text-primary);
+    padding: 0.4rem 0;
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+
+.share-songs-list li:last-child {
+    border-bottom: none;
+}
+
+/* Add-song form layout */
+.share-add-form {
+    margin-top: 0.75rem;
+}
+
+.share-add-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--color-text-primary);
+}
+
+/* Search input */
+.share-search-input {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    font-size: 1rem;
+    font-family: var(--font-body);
+    background: white;
+    border-radius: 12px;
+    border: 2px solid rgba(28, 140, 254, 0.2);
+    color: var(--color-text-primary);
+    transition: all 0.25s ease;
+    box-sizing: border-box;
+}
+
+.share-search-input:focus {
+    outline: none;
+    border-color: var(--color-cta-yellow);
+    box-shadow: 0 0 0 4px rgba(255, 221, 0, 0.18);
+}
+
+.share-search-input::placeholder {
+    color: var(--color-text-secondary);
+    opacity: 0.7;
+}
+
+/* Spotify search dropdown */
+.share-results-list {
+    list-style: none;
+    margin: 0.5rem 0 0;
+    padding: 0.35rem 0;
+    max-height: 220px;
+    overflow-y: auto;
+    border-radius: 12px;
+    background: #ffffff;
+    border: 1px solid var(--color-border);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+.share-results-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.45rem 0.8rem;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.share-results-item:hover {
+    background: rgba(28, 140, 254, 0.06);
+}
+
+.share-results-item img {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+
+.share-results-item-title {
+    font-family: var(--font-heading);
+    font-size: 0.95rem;
+    color: var(--color-text-primary);
+}
+
+.share-results-item-meta {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+}
+
+/* Small result / error text */
+.share-add-form-status {
+    margin-top: 0.4rem;
+    font-size: 0.85rem;
+    font-family: var(--font-body);
+}
+
+.share-add-form-status.error {
+    color: var(--color-cta-orange);
+}
+
+.share-add-form-status.success {
+    color: #27ae60;
+}

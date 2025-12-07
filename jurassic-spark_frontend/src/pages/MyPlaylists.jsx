@@ -216,12 +216,23 @@ const MyPlaylists = () => {
             <div style={{ marginTop: "1rem" }}>
                 <strong>Songs:</strong>
                 <ul style={{ paddingLeft: "1.2rem", margin: "0.5rem 0" }}>
-                    {playlist.tracks?.items?.map((item, idx) => (
+                {/* Prefer backend PlaylistItem model if present */}
+                {Array.isArray(playlist.items) && playlist.items.length > 0 ? (
+                    playlist.items.map((item) => (
+                        <li key={item.id}>
+                            {(item.song?.title || item.title || "Untitled")}{' '}
+                            -{' '}
+                            {(item.song?.artist || item.artist || "Unknown artist")}
+                        </li>
+                        ))
+                    ) : (
+                        playlist.tracks?.items?.map((item, idx) => (
                         <li key={item.track?.id || idx}>
                             {item.track?.name} -{" "}
                             {item.track?.artists?.map((a) => a.name).join(", ")}
                         </li>
-                    ))}
+                        ))
+                    )}
                 </ul>
             </div>
             <div style={{ marginTop: "1rem", display: "flex", gap: "1rem" }}>
