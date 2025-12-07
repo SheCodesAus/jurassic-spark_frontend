@@ -10,7 +10,8 @@
 
 .userpage-header {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: flex-start;
   align-items: center;
   padding: 2rem 1.5rem 1rem 1.5rem;
   width: 100%;
@@ -21,6 +22,7 @@
   font-size: 1.5rem;
   color: #fff;
   font-weight: 600;
+  text-align: center;
 }
 
 .userpage-username {
@@ -28,17 +30,19 @@
 }
 
 .userpage-photo {
-  width: 56px;
-  height: 56px;
-  object-fit: contain;
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  position: relative;
+  align-items: center;
 }
 
 .userpage-main {
   flex: 1;
-  padding: 1rem 1.5rem 2rem 1.5rem;
+  padding: 0 0 1.5rem 0;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: flex-start;
   width: 100%;
   box-sizing: border-box;
 }
@@ -49,10 +53,21 @@
   margin-bottom: 1rem;
 }
 
+.userpage-title {
+  color: #fff;
+  font-size: 1.3rem;
+  text-align: center;
+  margin: 1.2rem auto 1.2rem auto; /* space above and below */
+  font-weight: 600;
+  letter-spacing: 1px;
+  margin-bottom: 0.7rem;
+}
+
 .userpage-playlists {
   list-style: none;
   padding: 0;
   margin: 0;
+  margin-top: 0.3rem;
 }
 
 .userpage-playlist-item {
@@ -88,6 +103,57 @@
   font-size: 1.3rem;
 }
 
+.no-playlists-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 0;
+  background: rgba(255,255,255,0.05);
+  border-radius: 1rem;
+  margin-top: 1.5rem;
+}
+
+.no-playlists-message {
+  color: #fff;
+  font-size: 1.1rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.hero-btn {
+  width: auto;
+  min-width: 140px;
+  max-width: 200px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  font-size: 1rem;
+  padding: 0.5rem 1.1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--color-cta-yellow) 0%, var(--color-cta-orange) 100%);
+  border: none;
+  color: #1a1a2e;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  box-sizing: border-box;
+  white-space: nowrap;      /* keeps text on one line */
+}
+
+.hero-btn:hover,
+.hero-btn:focus {
+  background: linear-gradient(135deg, var(--color-cta-orange) 0%, var(--color-cta-yellow) 100%);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  transform: translateY(-2px) scale(1.03);
+  text-decoration: none;
+}
+
 /* Desktop styles: wider, more padding, centered content but full background */
 @media (min-width: 900px) {
   .userpage-header, .userpage-main {
@@ -112,9 +178,16 @@
   .userpage-greeting {
     font-size: 2rem;
   }
+
   .userpage-main h2 {
     font-size: 1.5rem;
   }
+
+    .userpage-title {
+    font-size: 1.7rem;
+    margin: 2rem auto 2rem auto;
+  }
+
   .userpage-playlist-item {
     font-size: 1.2rem;
     padding: 1.2rem 2rem;

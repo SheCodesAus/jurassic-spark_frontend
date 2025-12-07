@@ -62,9 +62,9 @@ export default function UserPage() {
             Hi, <span className="userpage-username">{user?.username}</span>
           </div>
         </div>
-      </header>
+      </header>      
+      <h2 className="userpage-title">Your Playlists</h2>
       <main className="userpage-main">
-        <h2>Your Playlists</h2>
         <ul className="userpage-playlists">
           {Array.isArray(playlists) && playlists.length > 0 ? (
             playlists.map((playlist) => (
@@ -74,7 +74,15 @@ export default function UserPage() {
               </li>
             ))
           ) : (
-            <li>No playlists found.</li>
+            <div className="no-playlists-container">
+              <p className="no-playlists-message">
+                No playlist found... <br />
+                <span>It’s time to start designing your own!</span>
+              </p>
+              <a href="/spotify" className="btn btn-primary hero-btn">
+                Create a Playlist
+              </a>
+            </div>
           )}
         </ul>
       </main>
