@@ -44,6 +44,10 @@ body {
     -moz-osx-font-smoothing: grayscale;  /* Makes text look smoother on Firefox/Linux */
 }
 
+#root {
+    width: 100%;
+}
+
 /* Link styling */
 a {
     color: var(--color-logo-vivid-blue); /* A nice blue for links */

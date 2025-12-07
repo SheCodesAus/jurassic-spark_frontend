@@ -39,12 +39,7 @@
 }
 
 .logo-circle {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: min(490px, 90vw);
-    height: min(490px, 90vw);
+    position: relative;
     background: white;
     border-radius: 50%;
     z-index: 0;
@@ -154,7 +149,7 @@
     .logo-circle {
         width: 490px;
         height: 490px;
-        margin: 0rem auto 1rem auto;
+        margin: 10rem auto 0rem auto;
     }
     
     .hero-logo {
@@ -177,7 +172,7 @@
     .hero-actions {
         flex-direction: row;
         gap: 2rem;
-        margin-top: 55rem;
+        margin-top: 7rem;
         margin-bottom: 4rem;
     }
 

@@ -17,6 +17,7 @@ const NavBar = () => {
   const handleLogout = () => {
     // clear tokens from local storage
     window.localStorage.removeItem("access_token");
+    window.localStorage.removeItem("jwt_token");
     window.localStorage.removeItem("refresh_token");
     //clear auth context
     setAuth({ access_token: null, refresh_token: null });
