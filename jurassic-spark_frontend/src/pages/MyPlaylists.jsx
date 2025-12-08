@@ -1,9 +1,11 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import { getAccessToken } from "../services/spotifyAuth";
-import "../pages/LoginPage.css";
 import { Link } from "react-router-dom";
 import SongSearchBar from "../components/SongSearchBar";
+import NoPlaylistGif from "../assets/rocker.gif";
+import Playlisticon from "../assets/listen.png";
+import "./UserPage.css";
 
 // Remove top-level userId, get it inside useEffect
 
@@ -178,7 +180,34 @@ const MyPlaylists = () => {
 
     if (loading) return <div>Loading playlists...</div>;
     if (error) return <div>{error}</div>;
-    if (!playlists || playlists.length === 0) return <div>No playlists yet.</div>;
+    if (!playlists || playlists.length === 0) {
+    return (
+        <main className="userpage-main">
+        <div className="no-playlists-container">
+            <div className="userpage-title-row">
+            <span className="userpage-title-icon-circle">
+                <img src={Playlisticon} alt="Playlist icon" className="userpage-title-icon" />
+            </span>
+            <h2 className="userpage-title">Your Playlists</h2>
+            </div>
+            <p className="no-playlists-message">
+            No playlist found... <br />
+            <span>It’s time to start designing your own!</span>
+            </p>
+            <div className="no-playlists-icon-circle">
+            <img
+                src={NoPlaylistGif}
+                alt="Animated playlist"
+                className="no-playlists-icon"
+            />
+            </div>
+            <a href="/spotify" className="btn btn-primary hero-btn">
+            Create a Playlist
+            </a>
+        </div>
+        </main>
+    );
+}
 
 
     return (
@@ -282,7 +311,9 @@ const MyPlaylists = () => {
                                 padding: "0.5rem 1rem",
                                 background: "#5A2FCF",
                                 color: "#fff",
-                                borderRadius: "8px"
+                                borderRadius: "8px",
+                                width: "100%",
+                                boxsizing: "border-box",
                             }}
                             onClick={() => openShareModal(playlist.id)}
                         // onClick={generateShareLink}
