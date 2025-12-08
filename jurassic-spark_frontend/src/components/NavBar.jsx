@@ -47,7 +47,7 @@ const NavBar = () => {
       {/* Nav links */}
       <ul className={`navbar-links ${menuOpen ? 'open' : ''}`}>
         <li><Link to="/spotify">Create a playlist </Link></li>
-        <li><Link to="/my-playlists">My Playlists</Link></li>
+        
 
       {auth.access_token && auth.refresh_token ? (
         <li className="navbar-user-menu">
@@ -62,8 +62,13 @@ const NavBar = () => {
           {userMenuOpen && (
             <ul className="user-dropdown">
               <li>
-                <Link to="/user" onClick={() => setUserMenuOpen(false)}>
+                <Link to="/my-playlists" onClick={() => setUserMenuOpen(false)}>
                   My Playlists
+                </Link>
+              </li>
+              <li>
+                <Link to="/user" onClick={() => setUserMenuOpen(false)}>
+                My Account
                 </Link>
               </li>
               <li>

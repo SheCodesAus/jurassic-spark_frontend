@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import NavBar from './components/NavBar';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
@@ -13,6 +13,17 @@ import PlayListCreator from './components/PlayListCreator';
 import UserPage from './pages/UserPage';
 import SharePage from './pages/SharePage';
 import PlaylistDetailsPage from './pages/PlaylistDetailsPage';
+import useAuth from './hooks/useAuth';
+
+const ProtectedRoute = ({ children }) => {
+  const { auth } = useAuth();
+
+  if (!auth?.access_token) {
+    return <Navigate to="/login" replace />
+  }
+
+  return children;
+};
 
 
 function App() {
@@ -34,13 +45,15 @@ function App() {
         <Route
           path="/spotify"
           element={
-            <div className="login-page">
-              <div className="login-main">
-                <div className="login-container">
-                  <PlayListCreator />
+            <ProtectedRoute>
+              <div className="login-page">
+                <div className="login-main">
+                  <div className="login-container">
+                    <PlayListCreator />
+                  </div>
                 </div>
               </div>
-            </div>
+            </ProtectedRoute>
           }
         />
         <Route path="/callback" element={<Callback />} />
