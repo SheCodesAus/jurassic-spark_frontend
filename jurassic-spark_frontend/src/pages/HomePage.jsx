@@ -38,15 +38,15 @@ const HomePage = () => (
             </div>
             <div className="hero-actions">
                 <Link to="/spotify">
-                    <button className="btn btn-primary hero-btn">
-                        <span>Create a </span>
-                        <span>Playlist</span>
+                    <button className="cta-yellow">
+                        <span>CREATE A </span>
+                        <span>PLAYLIST</span>
                     </button>
                 </Link>
                 <Link to="/signup">
-                    <button className="btn btn-orange hero-btn">
-                        <span>Make an </span>
-                        <span>Account</span>
+                    <button className="cta-orange">
+                        <span>MAKE AN </span>
+                        <span>ACCOUNT</span>
                     </button>
                 </Link>
             </div>

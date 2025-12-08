@@ -103,6 +103,7 @@
     border-top: 7px solid #7245F6;
     transform: translateY(-50%);
     z-index: 2;
+    margin-top: 1.3rem ;
 }
 
 /* Remove generic arrow styles */

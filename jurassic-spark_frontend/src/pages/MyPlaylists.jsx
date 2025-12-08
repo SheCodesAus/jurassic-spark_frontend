@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { getAccessToken } from "../services/spotifyAuth";
 import "../pages/LoginPage.css";
+import { Link } from "react-router-dom";
 
 // Remove top-level userId, get it inside useEffect
 
@@ -180,183 +181,201 @@ const MyPlaylists = () => {
 
     return (
         <>
-        {playlists.map((playlist) => (
-        <div
-            key={playlist.id}
-            style={{
-                border: "2px solid #5A2FCF",
-                borderRadius: "1rem",
-                background: "#fff",
-                boxShadow: "0 4px 16px rgba(90,47,207,0.08)",
-                padding: "2rem",
-                marginBottom: "2rem",
-                maxWidth: "420px",
-                margin: "0 auto 2rem auto",
-            }}
-        >
-            <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-                <img
-                    src={playlist.images?.[0]?.url || "/src/assets/VibeLab.png"}
-                    alt="Playlist"
-                    style={{ width: "60px", height: "60px", borderRadius: "50%" }}
-                />
-                <div>
-                    <h3 style={{ margin: 0, fontSize: "1.5rem", color: "#5A2FCF" }}>
-                        {playlist.name}
-                    </h3>
-                    <p style={{ margin: 0, color: "#888" }}>
-                        Vibe: {playlist.vibe || "Unknown"}
-                    </p>
-                </div>
-            </div>
-            <p style={{ marginTop: "1rem", color: "#333" }}>
-                <strong>Description:</strong>{" "}
-                {playlist.description || "No description."}
-            </p>
-            <div style={{ marginTop: "1rem" }}>
-                <strong>Songs:</strong>
-                <ul style={{ paddingLeft: "1.2rem", margin: "0.5rem 0" }}>
-                    {playlist.tracks?.items?.map((item, idx) => (
-                        <li key={item.track?.id || idx}>
-                            {item.track?.name} -{" "}
-                            {item.track?.artists?.map((a) => a.name).join(", ")}
-                        </li>
-                    ))}
-                </ul>
-            </div>
-            <div style={{ marginTop: "1rem", display: "flex", gap: "1rem" }}>
-                <button
-                    className="btn"
+            {playlists.map((playlist) => (
+
+                <div
+                    key={playlist.id}
                     style={{
-                        padding: "0.5rem 1rem",
-                        background: "#5A2FCF",
-                        color: "#fff",
-                        borderRadius: "8px"
+                        border: "2px solid #5A2FCF",
+                        borderRadius: "1rem",
+                        background: "#fff",
+                        boxShadow: "0 4px 16px rgba(90,47,207,0.08)",
+                        padding: "2rem",
+                        marginBottom: "2rem",
+                        maxWidth: "420px",
+                        margin: "0 auto 2rem auto",
                     }}
-                    onClick={() => openShareModal(playlist.id)}
-                // onClick={generateShareLink}
+
                 >
-                    Share
-                </button>
-            </div>
-        </div >
-    ))
-}
-
-{/* Share modal (password input -> submit -> show link) */ }
-{
-    showShareModal && (
-        <div
-            role="dialog"
-            aria-modal="true"
-            style={{
-                position: "fixed",
-                inset: 0,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: "rgba(0,0,0,0.45)",
-                zIndex: 9999,
-            }}
-        >
-            <div
-                style={{
-                    width: "min(420px, 95%)",
-                    background: "#fff",
-                    padding: "1rem",
-                    borderRadius: "10px",
-                    boxShadow: "0 8px 40px rgba(0,0,0,0.25)",
-                }}
-            >
-                {shareStage === "input" ? (
-                    <>
-                        <h3 style={{ marginTop: 0 }}>Create Share Link</h3>
-                        <p style={{ marginTop: 0, color: "#444" }}>
-                            Set a password for this playlist. Anyone with the link and this password can access it.
-                        </p>
-
-                        <input
-                            ref={shareInputRef}
-                            value={sharePassword}
-                            type="password"
-                            placeholder="Enter a password"
-                            onChange={(e) => setSharePassword(e.target.value)}
-                            style={{
-                                width: "100%",
-                                padding: "0.6rem",
-                                borderRadius: "6px",
-                                border: "1px solid #ddd",
-                                marginTop: "0.5rem",
-                                fontSize: "0.95rem",
-                            }}
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter") submitSharePassword();
-                            }}
-                        />
-
-                        {shareError && <div style={{ color: "red", marginTop: "0.5rem" }}>{shareError}</div>}
-
-                        <div style={{ marginTop: "1rem", display: "flex", gap: "0.5rem", justifyContent: "flex-end" }}>
-                            <button
-                                onClick={submitSharePassword}
-                                disabled={shareLoading}
-                                className="btn"
-                                style={{ background: "#5A2FCF", color: "#fff", padding: "0.5rem 1rem", borderRadius: "8px" }}
-                            >
-                                {shareLoading ? "Creating…" : "Create Link"}
-                            </button>
-                            <button
-                                onClick={handleCloseModal}
-                                className="btn"
-                                style={{ background: "#e5e7eb", color: "#111", padding: "0.5rem 1rem", borderRadius: "8px" }}
-                            >
-                                Cancel
-                            </button>
+                    <Link to={`/playlist/${playlist.id}`} key={playlist.id} style={{ textDecoration: 'none' }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+                            <img
+                                src={playlist.images?.[0]?.url || "/src/assets/VibeLab.png"}
+                                alt="Playlist"
+                                style={{ width: "60px", height: "60px", borderRadius: "50%" }}
+                            />
+                            <div>
+                                <h3 style={{ margin: 0, fontSize: "1.5rem", color: "#5A2FCF" }}>
+                                    {playlist.name}
+                                </h3>
+                                <p style={{ margin: 0, color: "#888" }}>
+                                    Vibe: {playlist.vibe || "Unknown"}
+                                </p>
+                            </div>
                         </div>
-                    </>
-                ) : (
-                    <>
-                        <h3 style={{ marginTop: 0 }}>Share Link</h3>
-                        <p style={{ marginTop: 0, color: "#444" }}>Copy the link below to share this playlist.</p>
-
-                        <input
-                            ref={shareInputRef}
-                            value={shareUrl}
-                            readOnly
+                    </Link>
+                    <p style={{ marginTop: "1rem", color: "#333" }}>
+                        <strong>Description:</strong>{" "}
+                        {playlist.description || "No description."}
+                    </p>
+                    <div style={{ marginTop: "1rem" }}>
+                        <strong>Songs:</strong>
+                        <ul style={{ paddingLeft: "1.2rem", margin: "0.5rem 0" }}>
+                            {/* Prefer backend PlaylistItem model if present */}
+                            {Array.isArray(playlist.items) && playlist.items.length > 0 ? (
+                                playlist.items.map((item) => (
+                                    <li key={item.id}>
+                                        {(item.song?.title || item.title || "Untitled")}{' '}
+                                        -{' '}
+                                        {(item.song?.artist || item.artist || "Unknown artist")}
+                                    </li>
+                                ))
+                            ) : (
+                                playlist.tracks?.items?.map((item, idx) => (
+                                    <li key={item.track?.id || idx}>
+                                        {item.track?.name} -{" "}
+                                        {item.track?.artists?.map((a) => a.name).join(", ")}
+                                    </li>
+                                ))
+                            )}
+                        </ul>
+                    </div>
+                    <div style={{ marginTop: "1rem", display: "flex", gap: "1rem" }}>
+                        <button
+                            className="btn"
                             style={{
-                                width: "100%",
-                                padding: "0.6rem",
-                                borderRadius: "6px",
-                                border: "1px solid #ddd",
-                                marginTop: "0.5rem",
-                                fontSize: "0.95rem",
+                                padding: "0.5rem 1rem",
+                                background: "#5A2FCF",
+                                color: "#fff",
+                                borderRadius: "8px"
                             }}
-                            onFocus={(e) => e.target.select()}
-                        />
+                            onClick={() => openShareModal(playlist.id)}
+                        // onClick={generateShareLink}
+                        >
+                            Share
+                        </button>
+                    </div>
+                </div >
 
-                        <div style={{ marginTop: "1rem", display: "flex", gap: "0.5rem", justifyContent: "flex-end" }}>
-                            <button
-                                onClick={handleCopyClick}
-                                disabled={copying}
-                                className="btn"
-                                style={{ background: "#5A2FCF", color: "#fff", padding: "0.5rem 1rem", borderRadius: "8px" }}
-                            >
-                                {copying ? "Copying…" : "Copy"}
-                            </button>
-                            <button
-                                onClick={handleCloseModal}
-                                className="btn"
-                                style={{ background: "#e5e7eb", color: "#111", padding: "0.5rem 1rem", borderRadius: "8px" }}
-                            >
-                                Close
-                            </button>
+
+            ))
+            }
+
+            {/* Share modal (password input -> submit -> show link) */}
+            {
+                showShareModal && (
+                    <div
+                        role="dialog"
+                        aria-modal="true"
+                        style={{
+                            position: "fixed",
+                            inset: 0,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            background: "rgba(0,0,0,0.45)",
+                            zIndex: 9999,
+                        }}
+                    >
+                        <div
+                            style={{
+                                width: "min(420px, 95%)",
+                                background: "#fff",
+                                padding: "1rem",
+                                borderRadius: "10px",
+                                boxShadow: "0 8px 40px rgba(0,0,0,0.25)",
+                            }}
+                        >
+                            {shareStage === "input" ? (
+                                <>
+                                    <h3 style={{ marginTop: 0 }}>Create Share Link</h3>
+                                    <p style={{ marginTop: 0, color: "#444" }}>
+                                        Set a password for this playlist. Anyone with the link and this password can access it.
+                                    </p>
+
+                                    <input
+                                        ref={shareInputRef}
+                                        value={sharePassword}
+                                        type="password"
+                                        placeholder="Enter a password"
+                                        onChange={(e) => setSharePassword(e.target.value)}
+                                        style={{
+                                            width: "100%",
+                                            padding: "0.6rem",
+                                            borderRadius: "6px",
+                                            border: "1px solid #ddd",
+                                            marginTop: "0.5rem",
+                                            fontSize: "0.95rem",
+                                        }}
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter") submitSharePassword();
+                                        }}
+                                    />
+
+                                    {shareError && <div style={{ color: "red", marginTop: "0.5rem" }}>{shareError}</div>}
+
+                                    <div style={{ marginTop: "1rem", display: "flex", gap: "0.5rem", justifyContent: "flex-end" }}>
+                                        <button
+                                            onClick={submitSharePassword}
+                                            disabled={shareLoading}
+                                            className="btn"
+                                            style={{ background: "#5A2FCF", color: "#fff", padding: "0.5rem 1rem", borderRadius: "8px" }}
+                                        >
+                                            {shareLoading ? "Creating…" : "Create Link"}
+                                        </button>
+                                        <button
+                                            onClick={handleCloseModal}
+                                            className="btn"
+                                            style={{ background: "#e5e7eb", color: "#111", padding: "0.5rem 1rem", borderRadius: "8px" }}
+                                        >
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <h3 style={{ marginTop: 0 }}>Share Link</h3>
+                                    <p style={{ marginTop: 0, color: "#444" }}>Copy the link below to share this playlist.</p>
+
+                                    <input
+                                        ref={shareInputRef}
+                                        value={shareUrl}
+                                        readOnly
+                                        style={{
+                                            width: "100%",
+                                            padding: "0.6rem",
+                                            borderRadius: "6px",
+                                            border: "1px solid #ddd",
+                                            marginTop: "0.5rem",
+                                            fontSize: "0.95rem",
+                                        }}
+                                        onFocus={(e) => e.target.select()}
+                                    />
+
+                                    <div style={{ marginTop: "1rem", display: "flex", gap: "0.5rem", justifyContent: "flex-end" }}>
+                                        <button
+                                            onClick={handleCopyClick}
+                                            disabled={copying}
+                                            className="btn"
+                                            style={{ background: "#5A2FCF", color: "#fff", padding: "0.5rem 1rem", borderRadius: "8px" }}
+                                        >
+                                            {copying ? "Copying…" : "Copy"}
+                                        </button>
+                                        <button
+                                            onClick={handleCloseModal}
+                                            className="btn"
+                                            style={{ background: "#e5e7eb", color: "#111", padding: "0.5rem 1rem", borderRadius: "8px" }}
+                                        >
+                                            Close
+                                        </button>
+                                    </div>
+                                </>
+                            )}
                         </div>
-                    </>
-                )}
-            </div>
-        </div>
-    )}
-    </>
+                    </div>
+                )
+            }
+        </>
     );
 };
 

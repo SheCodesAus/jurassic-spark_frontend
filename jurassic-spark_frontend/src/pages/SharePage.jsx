@@ -1,6 +1,8 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getSharedPlaylist, validateShareAccess } from "../services/playlistService";
+import { getSpotifyClientCredentialAccessToken } from "../services/spotifyAuth";
+import "./SharePage.css";
 
 /**
  * SharePage - public access via token + password
@@ -31,6 +33,13 @@ export default function SharePage() {
     const [newAlbum, setNewAlbum] = useState("");
     const [addError, setAddError] = useState("");
     const [addSuccess, setAddSuccess] = useState("");
+
+    // Spotify search state for adding songs
+    const [searchTerm, setSearchTerm] = useState("");
+    const [searchResults, setSearchResults] = useState([]);
+    const [searchStatus, setSearchStatus] = useState("");
+    const [showDropdown, setShowDropdown] = useState(false);
+    const [selectedSong, setSelectedSong] = useState(null);
 
     const apiBaseUrl = import.meta.env.VITE_JURASSIC_SPARK_BACKEND_API_URL;
 
@@ -104,20 +113,80 @@ export default function SharePage() {
         await attemptValidate(password, meta?.id, true);
     }
 
+    async function handleSearchChange(e) {
+        const value = e.target.value;
+        setSearchTerm(value);
+        setSelectedSong(null);
+        setAddError("");
+        setAddSuccess("");
+
+        if (value.trim().length < 2) {
+            setSearchResults([]);
+            setShowDropdown(false);
+            setSearchStatus("");
+            return;
+        }
+
+        try {
+            const token = await getSpotifyClientCredentialAccessToken();
+            const resp = await fetch(
+                `https://api.spotify.com/v1/search?q=${encodeURIComponent(value)}&type=track&limit=10`,
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+
+            if (!resp.ok) {
+                const text = await resp.text();
+                throw new Error(`Search failed: ${text}`);
+            }
+
+            const data = await resp.json();
+            const tracks = data.tracks?.items || [];
+            const results = tracks.map((track) => ({
+                id: track.id,
+                title: track.name,
+                artist: track.artists.map((a) => a.name).join(", "),
+                album: track.album?.name || "Unknown album",
+                image: track.album?.images?.[0]?.url || "",
+            }));
+
+            setSearchResults(results);
+            setShowDropdown(true);
+            setSearchStatus("");
+        } catch (err) {
+            console.error("Spotify search error:", err);
+            setSearchStatus("Error searching Spotify tracks.");
+            setSearchResults([]);
+            setShowDropdown(false);
+        }
+    }
+
+    function handleSelectSong(song) {
+        setSelectedSong(song);
+        setSearchTerm(`${song.title} by ${song.artist}`);
+        setSearchResults([]);
+        setShowDropdown(false);
+        setAddError("");
+        setAddSuccess("");
+    }
+
+
     // Add song: include accessCode in body so the backend permission allows anonymous adds with correct password
     async function handleAddSong(e) {
         e.preventDefault();
         setAddError("");
         setAddSuccess("");
 
-        if (!newTitle.trim() && !newSpotifyId.trim()) {
-            setAddError("Provide at least a Spotify ID or a title.");
-            return;
-        }
         if (!playlist?.id) {
             setAddError("Playlist not loaded.");
             return;
         }
+
+        if (!selectedSong) {
+            setAddError("Playlist not loaded.");
+        }
+        
 
         const accessCode = password || localStorage.getItem(`playlist_access_${playlist.id}`) || "";
         if (!accessCode) {
@@ -131,11 +200,11 @@ export default function SharePage() {
             const headers = { "Content-Type": "application/json" };
             const body = {
                 playlist_id: playlist.id,
-                spotify_id: newSpotifyId || null,
-                title: newTitle || "",
-                artist: newArtist || "",
-                album: newAlbum || "",
-                accessCode, // backend's HasPlaylistAccess checks request.data.get('accessCode')
+                spotify_id: selectedSong.id,
+                title: selectedSong.title || "",
+                artist: selectedSong.artist || "",
+                album: selectedSong.album || "Unknown",
+                accessCode,
             };
 
             const resp = await fetch(`${apiBaseUrl}/api/playlists/playlist-items/add/`, {
@@ -166,10 +235,11 @@ export default function SharePage() {
             });
 
             setAddSuccess("Song added!");
-            setNewSpotifyId("");
-            setNewTitle("");
-            setNewArtist("");
-            setNewAlbum("");
+            setSelectedSong(null);
+            setSearchTerm(""),
+            setSearchResults([]);
+            setShowDropdown(false);
+
         } catch (err) {
             console.error("Add song error:", err);
             setAddError(err?.message || "Failed to add song. Check password and try again.");
@@ -193,10 +263,10 @@ export default function SharePage() {
                     <p>{playlist.description || "No description."}</p>
                 </div>
 
-                <div style={{ marginTop: "1rem" }}>
+                <div className="share-songs-section" style={{ marginTop: "1rem" }}>
                     <h3>Songs</h3>
                     {playlist.items && playlist.items.length ? (
-                        <ol>
+                        <ol className="share-songs-list">
                             {playlist.items.map((item) => (
                                 <li key={item.id} style={{ marginBottom: 6 }}>
                                     {item.song?.title || item.title || "Untitled"} —{" "}
@@ -214,33 +284,84 @@ export default function SharePage() {
                     <p style={{ marginTop: 0, color: "#666" }}>
                         Provide a Spotify track ID or the title/artist. The playlist password will be sent to the server to authorize the add.
                     </p>
+                <form className="share-add-form" onSubmit={handleAddSong} style={{ marginTop: 12 }}>
+                    <label style={{ display: "block", marginBottom: 6 }}>Search for a song</label>
+                    <input
+                        type="text"
+                        className="share-search-input"
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                        placeholder="Type song or artist name…"
+                        style={{ width: "100%", padding: "0.6rem", boxSizing: "border-box" }}
+                        autoComplete="off"
+                    />
 
-                    <form onSubmit={handleAddSong} style={{ marginTop: 12 }}>
-                        <label style={{ display: "block", marginBottom: 6 }}>Spotify track ID (optional)</label>
-                        <input value={newSpotifyId} onChange={(e) => setNewSpotifyId(e.target.value)} placeholder="e.g. 3n3Ppam7vgaVa1iaRUc9Lp" style={{ width: "100%", padding: "0.6rem", boxSizing: "border-box" }} />
-
-                        <label style={{ display: "block", marginTop: 10, marginBottom: 6 }}>Title (optional)</label>
-                        <input value={newTitle} onChange={(e) => setNewTitle(e.target.value)} placeholder="Track title" style={{ width: "100%", padding: "0.6rem", boxSizing: "border-box" }} />
-
-                        <label style={{ display: "block", marginTop: 10, marginBottom: 6 }}>Artist (optional)</label>
-                        <input value={newArtist} onChange={(e) => setNewArtist(e.target.value)} placeholder="Artist name" style={{ width: "100%", padding: "0.6rem", boxSizing: "border-box" }} />
-
-                        <label style={{ display: "block", marginTop: 10, marginBottom: 6 }}>Album (optional)</label>
-                        <input value={newAlbum} onChange={(e) => setNewAlbum(e.target.value)} placeholder="Album name" style={{ width: "100%", padding: "0.6rem", boxSizing: "border-box" }} />
-
-                        {addError && <div style={{ color: "red", marginTop: 8 }}>{addError}</div>}
-                        {addSuccess && <div style={{ color: "green", marginTop: 8 }}>{addSuccess}</div>}
-
-                        <div style={{ marginTop: 10 }}>
-                            <button type="submit" disabled={adding} className="btn" style={{ padding: "0.6rem 1rem" }}>
-                                {adding ? "Adding…" : "Add Song"}
-                            </button>
-
-                            <button type="button" onClick={() => navigate("/")} className="btn" style={{ marginLeft: 8, padding: "0.6rem 1rem" }}>
-                                Back to Home
-                            </button>
+                    {searchStatus && (
+                        <div style={{ marginTop: 4, color: "red", fontSize: "0.85rem" }}>
+                            {searchStatus}
                         </div>
-                    </form>
+                    )}
+
+                    {showDropdown && searchResults.length > 0 && (
+                        <ul className="share-results-list">
+                            {searchResults.map((song) => (
+                                <li
+                                    key={song.id}
+                                    className="share-results-item"
+                                    onClick={() => handleSelectSong(song)}
+                                    style={{
+                                        padding: "0.4rem 0.6rem",
+                                        cursor: "pointer",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: "0.5rem",
+                                    }}
+                                >
+                                    {song.image && (
+                                        <img
+                                            src={song.image}
+                                            alt="album cover"
+                                            style={{ width: 32, height: 32, borderRadius: 4 }}
+                                        />
+                                    )}
+                                    <div>
+                                        <div className="share-results-item-title">{song.title}</div>
+                                        <div className="share-results-item-meta">{song.artist}{song.album ? ` • ${song.album}` : ""}</div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+
+                    {selectedSong && (
+                        <div style={{ marginTop: 8, fontSize: "0.9rem", color: "#333" }}>
+                            Selected: <strong>{selectedSong.title}</strong> — {selectedSong.artist}
+                        </div>
+                    )}
+
+                    {addError && <div className="share-add-form-status error">{addError}</div>}
+                    {addSuccess && <div className="share-add-form-status success">{addSuccess}</div>}
+
+                    <div style={{ marginTop: 10 }}>
+                        <button
+                            type="submit"
+                            disabled={adding || !selectedSong}
+                            className="btn btn-primary"
+                            style={{ padding: "0.6rem 1rem" }}
+                        >
+                            {adding ? "Adding…" : "Add Song"}
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={() => navigate("/")}
+                            className="btn btn-ghost"
+                            style={{ marginLeft: 8, padding: "0.6rem 1rem" }}
+                        >
+                            Back to Home
+                        </button>
+                    </div>
+                </form>
                 </div>
             </div>
         );
