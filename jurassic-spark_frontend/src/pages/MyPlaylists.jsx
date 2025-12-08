@@ -1,7 +1,9 @@
+
 import React, { useEffect, useState, useRef } from "react";
 import { getAccessToken } from "../services/spotifyAuth";
 import "../pages/LoginPage.css";
 import { Link } from "react-router-dom";
+import SongSearchBar from "../components/SongSearchBar";
 
 // Remove top-level userId, get it inside useEffect
 
@@ -239,6 +241,39 @@ const MyPlaylists = () => {
                                 ))
                             )}
                         </ul>
+                    </div>
+                    {/* Reusable SongSearchBar for adding a song */}
+                    <div style={{ marginTop: "1.5rem" }}>
+                        <SongSearchBar
+                            onSongSelect={async (song) => {
+                                // Add song to playlist logic
+                                const jwtToken = localStorage.getItem("jwt_token");
+                                const apiBaseUrl = import.meta.env.VITE_JURASSIC_SPARK_BACKEND_API_URL;
+                                try {
+                                    const resp = await fetch(`${apiBaseUrl}/api/playlists/playlist-items/add/`, {
+                                        method: "POST",
+                                        headers: {
+                                            "Content-Type": "application/json",
+                                            Authorization: `Bearer ${jwtToken}`,
+                                        },
+                                        body: JSON.stringify({
+                                            playlist_id: playlist.id,
+                                            spotify_id: song.id,
+                                            title: song.title,
+                                            artist: song.artist,
+                                            album: song.album || "Unknown",
+                                        }),
+                                    });
+                                    if (!resp.ok) throw new Error("Failed to add song.");
+                                    // Optionally refetch playlists to update UI
+                                    await fetchPlaylists();
+                                    alert("Song added!");
+                                } catch (err) {
+                                    alert("Error adding song: " + err.message);
+                                }
+                            }}
+                            placeholder="Search and add a song..."
+                        />
                     </div>
                     <div style={{ marginTop: "1rem", display: "flex", gap: "1rem" }}>
                         <button
