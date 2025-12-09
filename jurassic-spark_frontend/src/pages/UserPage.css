@@ -214,6 +214,32 @@
   text-decoration: none;
 }
 
+/* Playlist vibe color tags */
+.playlist-vibe.vibe-pop {
+  background: #FFA94D;    /* Orange */
+  color: #fff;
+}
+.playlist-vibe.vibe-rock {
+  background: #232323;    /* Charcoal */
+  color: #fff;
+}
+.playlist-vibe.vibe-latin {
+  background: #e53935;    /* Red */
+  color: #fff;
+}
+.playlist-vibe.vibe-country {
+  background: #ffd600;    /* Yellow */
+  color: #333;
+}
+.playlist-vibe.vibe-techno {
+  background: #1db954;    /* Green */
+  color: #fff;
+}
+.playlist-vibe.vibe-rnbsoul {
+  background: #7245F6;    /* Purple */
+  color: #fff;
+}
+
 /* Desktop styles: wider, more padding, centered content but full background */
 @media (min-width: 900px) {
   .userpage-header, .userpage-main {

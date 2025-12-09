@@ -11,45 +11,46 @@ export default function UserPage() {
   const [playlists, setPlaylists] = useState([]);
   const [loading, setLoading] = useState(true);
   const token = localStorage.getItem("jwt_token");
-  console.log("UserPage token:", token);
   if (!token) {
-  // Optionally redirect to login if not authenticated
-  window.location.href = "/login";
-  return;
+    window.location.href = "/login";
+    return;
   }
 
-  async function fetchData(token) {
-    try {
-      // Fetch user profile
-      const userRes = await fetch(`${API_URL}/api/users/profile/`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (!userRes.ok) throw new Error("User not authenticated");
-      const userData = await userRes.json();
+  useEffect(() => {
+    async function fetchData(token) {
+      try {
+        // Fetch user profile
+        const userRes = await fetch(`${API_URL}/api/users/profile/`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (!userRes.ok) throw new Error("User not authenticated");
+        const userData = await userRes.json();
 
-      console.log('User Data:', userData);
+        // Fetch playlists
+        const playlistsRes = await fetch(`${API_URL}/api/playlists/`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const playlistsData = await playlistsRes.json();
 
-      // Fetch playlists
-      const playlistsRes = await fetch(`${API_URL}/api/playlists/`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const playlistsData = await playlistsRes.json();
-
-      setUser({
-        username: userData.username,
-        profile_photo: userData.profile_photo || UserPhoto
-      });
-      setPlaylists(Array.isArray(playlistsData) ? playlistsData : []);
-    } catch (err) {
-      console.error("Error fetching user data:", err);
-    } finally {
-      setLoading(false);
+        setUser({
+          username: userData.username,
+          profile_photo: userData.profile_photo || UserPhoto
+        });
+        setPlaylists(Array.isArray(playlistsData) ? playlistsData : []);
+      } catch (err) {
+        console.error("Error fetching user data:", err);
+      } finally {
+        setLoading(false);
+      }
     }
-  }
-
-  fetchData(token);
+    fetchData(token);
+  }, [token]);
 
   if (loading) return <div className="userpage-loading">Loading...</div>;
+
+  // Helper to get the vibe class
+  const getVibeClass = (vibe) =>
+    `playlist-vibe vibe-${(vibe || '').toLowerCase().replace(/[^a-z]/g, '')}`;
 
   return (
     <div className="userpage-container">
@@ -79,7 +80,7 @@ export default function UserPage() {
               {playlists.map((playlist) => (
                 <li key={playlist.id} className="userpage-playlist-item">
                   <span className="playlist-name">{playlist.name}</span>
-                  <span className="playlist-vibe">{playlist.vibe}</span>
+                  <span className={getVibeClass(playlist.vibe)}>{playlist.vibe}</span>
                 </li>
               ))}
             </ul>
@@ -101,8 +102,8 @@ export default function UserPage() {
               </a>
             </>
           )}
-          </div>
-        </main>
-      </div>
-    );
-  }
+        </div>
+      </main>
+    </div>
+  );
+}
