@@ -180,6 +180,7 @@ textarea:focus {
     margin: 0 auto;          /* Centers the container horizontally */
 }
 
+
 /* --- 7. Responsive Design (Desktop Styles) --- */
 
 @media (min-width: 768px) { /* For screens wider than 768 pixels (e.g., tablets/desktops) */
